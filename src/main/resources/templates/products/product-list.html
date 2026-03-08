@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${title} ?: 'Product'">Product</title>
+</head>
+<body>
+
+<div layout:fragment="banner">
+    <div class="container mt-3">
+         <div class="banner-placeholder">
+             <!-- Used CSS background image, or could be empty div with color -->
+         </div>
+    </div>
+</div>
+
+<section layout:fragment="content">
+<div class="main-container admin-page">
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
+        <div>
+             <h3 class="mb-0 text-uppercase fw-bold"><i class="fa-solid fa-box-open text-primary"></i> Quản Lý Sản Phẩm</h3>
+             <small class="text-muted">Trang dành cho Admin</small>
+        </div>
+        <div>
+            <a th:href="@{/admin}" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Trang Chủ Quản Lý</a>
+            <a th:href="@{/categories}" class="btn btn-outline-primary fw-bold me-2"><i class="fa-solid fa-layer-group"></i> Quản Lý Danh Mục</a>
+            <a th:href="@{/products/add}" class="btn btn-warning fw-bold"><i class="fa-solid fa-plus-circle"></i> Thêm Sản Phẩm</a>
+        </div>
+    </div>
+    
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-check-circle"></i> <span th:text="${success}">Success message</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}">Error message</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Countdown Timer Placeholder (Visual Only) -->
+    <div class="d-flex align-items-center mb-3">
+        <span class="badge bg-warning text-dark fs-6 me-2">Chỉ còn: 00 : 29 : 57</span>
+    </div>
+
+    <!-- Admin Table View -->
+    <div class="bg-white rounded shadow-sm p-3">
+        <table class="table table-hover align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" style="width: 80px;">Ảnh</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Danh mục</th>
+                    <th scope="col">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.id}">1</td>
+                    <td>
+                        <img th:if="${product.image != null and product.image != ''}"
+                             th:src="${product.image.startsWith('http') ? product.image : '/product-images/' + product.image}"
+                             class="rounded border" width="60" height="60" style="object-fit: cover;">
+                         <div th:unless="${product.image != null and product.image != ''}" 
+                              class="rounded border bg-light d-flex align-items-center justify-content-center" 
+                              style="width: 60px; height: 60px;">
+                             <i class="fa-regular fa-image text-muted"></i>
+                         </div>
+                    </td>
+                    <td class="fw-bold" th:text="${product.name}">Iphone 15</td>
+                    <td class="text-danger fw-bold" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">20.000.000₫</td>
+                    <td>
+                        <span class="badge bg-info text-dark" th:if="${product.category != null}" th:text="${product.category.name}">Phone</span>
+                        <span class="badge bg-secondary" th:unless="${product.category != null}">Chưa phân loại</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-primary me-1" title="Sửa">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div th:if="${products.empty}" class="text-center py-5">
+        <p class="text-muted">Chưa có sản phẩm nào.</p>
+        <a th:href="@{/products/add}" class="btn btn-warning">Thêm sản phẩm ngay</a>
+    </div>
+</div>
+</section>
+</body>
+</html>

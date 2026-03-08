@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Quản Lý Danh Mục</title>
+</head>
+<body>
+<section layout:fragment="content">
+<div class="main-container admin-page">
+    
+    <!-- Admin Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
+        <div>
+             <h3 class="mb-0 text-uppercase fw-bold"><i class="fa-solid fa-layer-group text-primary"></i> Quản Lý Danh Mục</h3>
+             <small class="text-muted">Trang dành cho Admin</small>
+        </div>
+        <div>
+            <a th:href="@{/admin}" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Trang Chủ Quản Lý</a>
+            <a th:href="@{/products}" class="btn btn-outline-primary fw-bold me-2"><i class="fa-solid fa-list-check"></i> Quản Lý Sản Phẩm</a>
+            <a th:href="@{/categories/add}" class="btn btn-warning fw-bold"><i class="fa-solid fa-plus-circle"></i> Thêm Danh Mục</a>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-check-circle"></i> <span th:text="${success}">The details were saved successfully.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}">The details were not saved.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Category Table -->
+    <div class="bg-white rounded shadow-sm p-3">
+        <table class="table table-hover align-middle">
+            <thead class="bg-light">
+            <tr>
+                <th scope="col" style="width: 8%;">ID</th>
+                <th scope="col">Tên Danh Mục</th>
+                <th scope="col" style="width: 15%;">Icon</th>
+                <th scope="col" style="width: 20%;">Danh Mục Cha</th>
+                <th scope="col" style="width: 20%;">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="category : ${categories}">
+                <td th:text="${category.id}" class="fw-bold text-secondary">1</td>
+                <td class="fw-bold">
+                    <i th:if="${category.icon}" th:class="${category.icon}" class="me-1"></i>
+                    <span th:text="${category.name}">Electronics</span>
+                </td>
+                <td class="text-muted small" th:text="${category.icon != null ? category.icon : '—'}">—</td>
+                <td>
+                    <span th:if="${category.parent != null}" class="badge bg-info text-dark" th:text="${category.parent.name}">Parent</span>
+                    <span th:if="${category.parent == null}" class="badge bg-success">Danh mục gốc</span>
+                </td>
+                <td>
+                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-sm btn-primary me-1" title="Sửa">
+                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+                    </a>
+                    <a th:href="@{/categories/delete/{id}(id=${category.id})}"
+                       class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                        <i class="fa-solid fa-trash"></i> Xóa
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div th:if="${categories.empty}" class="text-center py-5">
+        <p class="text-muted">Chưa có danh mục nào.</p>
+        <a th:href="@{/categories/add}" class="btn btn-warning">Thêm danh mục ngay</a>
+    </div>
+
+</div>
+</section>
+</body>
+</html>

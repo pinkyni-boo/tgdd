@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* ========================================================
+     FRAGMENT: header
+     Usage in layout.html:
+       <div th:replace="~{fragments/header :: header}"></div>
+     ======================================================== */-->
+
+<div th:fragment="header">
+
+    <!-- TOP BAR BANNER -->
+    <div class="header-top-bar">
+        <div class="banner-media">
+            <div class="media-slider" data-size="1">
+                <div class="item" data-background-color="#B72025" data-order="1">
+                    <a aria-label="slide" >
+                        <img width="1200" height="44" loading="lazy"
+                             src="https://cdnv2.tgdd.vn/mwg-static/tgdd/Banner/74/cc/74ccf84d40e537f5802ef75cbf252855.png"
+                             alt="Banner top bar">
+                    </a>
+                </div>
+            </div>
+            <style>.banner-media { background-color: #B72025; }</style>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER v2024 -->
+    <header class="header v2024 hasbanner" data-sub="0">
+        <div class="header__top">
+                <!-- LOGO -->
+                <a th:href="@{/}" class="header__logo" aria-label="logo">
+                    <i class="iconnewglobal-logo"></i>
+                </a>
+
+                <!-- SEARCH -->
+                <form th:action="@{/products}" method="get" class="header__search">
+                    <div class="input-search">
+                        <input id="skw" type="text" class="input-search"
+                               placeholder="Bạn tìm gì..."
+                               name="key" autocomplete="off" maxlength="100">
+                        <button type="submit" class="search-icon" aria-label="Tìm kiếm">
+                            <i class="icon-search"></i>
+                        </button>
+                    </div>
+                    <div id="search-result"></div>
+                </form>
+
+                <!-- HEADER ACTION BUTTONS -->
+                <div class="header-actions-group">
+                    <!-- Đăng nhập -->
+                    <a th:href="@{/}" class="header-action-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span>Đăng nhập</span>
+                    </a>
+
+                    <!-- Giỏ hàng -->
+                    <a th:href="@{/cart}" class="header-action-btn" id="cart-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        <span>Giỏ hàng</span>
+                    </a>
+
+                    <!-- Quản lý -->
+                    <a th:href="@{/admin}" class="header-action-btn" id="admin-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span>Quản lý</span>
+                    </a>
+                </div>
+        </div>
+
+        <!-- MAIN NAVIGATION MENU -->
+        <div class="header__main">
+            <div style="width:1200px;margin:0 auto;">
+                <ul class="main-menu">
+
+                    <!-- DYNAMIC: Root categories from DB -->
+                    <li th:each="cat : ${rootCategories}"
+                        th:classappend="${cat.children != null and !cat.children.isEmpty()} ? 'has-list' : ''">
+                        <a th:href="@{/products(category=${cat.name})}" style="display:flex;align-items:center;gap:5px;">
+                            <i th:if="${cat.icon != null and !cat.icon.isEmpty()}" th:class="${cat.icon}" style="font-size:15px;"></i>
+                            <span th:text="${cat.name}"
+                                  th:classappend="${cat.children != null and !cat.children.isEmpty()} ? ' has-child' : ''">Category</span>
+                        </a>
+                        <!-- Mega dropdown for child categories -->
+                        <div class="navmwg" th:if="${cat.children != null and !cat.children.isEmpty()}">
+                            <div class="item-child">
+                                <strong th:text="${cat.name}">Parent</strong>
+                                <a th:each="child : ${cat.children}"
+                                   th:href="@{/products(category=${child.name})}">
+                                    <i th:if="${child.icon}" th:class="${child.icon}" style="width:25px;text-align:center;margin-right:5px;"></i>
+                                    <h3 th:text="${child.name}">Sub Category</h3>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay and mask (used for dropdown backdrop) -->
+    <div class="header-overlay"><div><a href="javascript:;">X</a></div></div>
+    <div class="header-mask"></div>
+
+</div><!-- end th:fragment="header" -->
+
+</body>
+</html>

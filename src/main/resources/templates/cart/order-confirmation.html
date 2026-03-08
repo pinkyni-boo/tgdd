@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Đặt Hàng Thành Công</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="modern-card p-5 text-center mt-5 mb-5">
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle" style="width: 80px; height: 80px;">
+                        <i class="fa-solid fa-check fa-3x"></i>
+                    </div>
+                </div>
+                
+                <h2 class="fw-bold mb-3 text-success">ĐẶT HÀNG THÀNH CÔNG!</h2>
+                <p class="text-muted mb-4 fs-5" th:text="${message}">Đơn hàng của bạn đã được ghi nhận.</p>
+                
+                <div class="bg-light p-4 rounded mb-4 text-start">
+                    <h6 class="fw-bold mb-2"><i class="fa-regular fa-envelope me-2"></i>Email xác nhận</h6>
+                    <p class="mb-0 text-muted small">Thông tin chi tiết đơn hàng đã được gửi đến email của bạn. Chúng tôi sẽ liên hệ trong thời gian sớm nhất để xác nhận giao hàng.</p>
+                </div>
+
+                <div class="d-grid gap-2 d-sm-flex justify-content-center">
+                    <a href="/" class="btn btn-secondary-tgdd px-5 rounded-pill fw-bold">
+                        <i class="fa-solid fa-arrow-left me-2"></i> TIẾP TỤC MUA SẮM
+                    </a>
+                    <a href="/order/history" class="btn btn-outline-secondary px-4 rounded-pill">
+                        <i class="fa-solid fa-clock-rotate-left me-2"></i> TRA CỨU ĐƠN HÀNG
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

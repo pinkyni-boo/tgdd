@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Giỏ hàng - Thegioididong.com</title>
+</head>
+<body>
+<section layout:fragment="content">
+<div class="tgdd-cart-page">
+    <form th:action="@{/order/submit}" method="post" id="checkoutForm">
+
+    <div class="cart-body">
+        <!-- Delivery toggle -->
+        <div class="choosedelivery-top">
+            <input type="hidden" value="2">
+            <span class="option-first active" onclick="this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');var s=this.parentElement.querySelector('.option-second');s.classList.remove('active');s.querySelector('.cart-radio-item').classList.remove('active');">
+                <span class="cart-radio-item active"></span> Giao tận nơi
+            </span>
+            <span class="option-second" onclick="this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');var s=this.parentElement.querySelector('.option-first');s.classList.remove('active');s.querySelector('.cart-radio-item').classList.remove('active');">
+                <span class="cart-radio-item"></span> Nhận tại siêu thị
+            </span>
+        </div>
+
+        <div class="middleCart">
+            <!-- Location / Customer info -->
+            <div class="cart-fragment">
+                <div class="info__cart location">
+                    <div class="title-content">
+                        <div class="location-row">
+                            <span class="iconcart-label-location"></span>
+                            <div class="location-input-wrap">
+                                <input type="text" name="customerName" class="cart-input-field" placeholder="Nhập họ tên người nhận" required>
+                            </div>
+                        </div>
+                        <div class="location-row">
+                            <span class="iconcart-label-phone"></span>
+                            <div class="location-input-wrap">
+                                <input type="tel" name="phone" class="cart-input-field" placeholder="Nhập số điện thoại" required>
+                            </div>
+                        </div>
+                        <div class="location-row">
+                            <span class="iconcart-label-address"></span>
+                            <div class="location-input-wrap">
+                                <input type="text" name="address" class="cart-input-field" placeholder="Nhập địa chỉ nhận hàng">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="delivery_arrow"></div>
+                </div>
+            </div>
+
+            <!-- Product list -->
+            <div class="product-list">
+                <div th:each="item : ${cartItems}" class="product-item">
+                    <div class="product-item-info">
+                        <div class="classImg">
+                            <a th:href="@{'/products/' + ${item.product.id}}" class="product-item__image">
+                                <img th:src="${item.product.image.startsWith('http') ? item.product.image : '/product-images/' + item.product.image}"
+                                     th:alt="${item.product.name}"
+                                     class="product-item__image-img" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="product-item__right class-item">
+                            <div class="product-item__right-info">
+                                <a th:href="@{'/products/' + ${item.product.id}}" class="product-item__name"
+                                   th:text="${item.product.name}">Tên sản phẩm</a>
+                                <div class="product-item__right-info__price">
+                                    <div class="price-original" th:text="${#numbers.formatDecimal(item.product.price, 0, 'POINT', 0, 'COMMA')} + 'đ'">15.490.000đ</div>
+                                    <div class="price-discount" th:if="${item.product.discount gt 0}"
+                                         th:text="${#numbers.formatDecimal(item.product.price * 100 / (100 - item.product.discount), 0, 'POINT', 0, 'COMMA')} + 'đ'">15.790.000đ</div>
+                                </div>
+                            </div>
+                            <div class="product-item__right-info-other">
+                                <p class="product-color__title" th:if="${item.product.category != null}">
+                                    <span th:text="${item.product.category.name}">Danh mục</span>
+                                </p>
+                                <div class="block product-promotion">
+                                    <aside class="area-select-promotion">
+                                        <label class="promo-select-label">Chọn 1 trong 2 khuyến mãi</label>
+                                        <div class="promo-option">
+                                            <span class="promo-option-item">
+                                                <i class="cart-radio-item"></i>
+                                                <p>Giảm giá khi mua online</p>
+                                            </span>
+                                        </div>
+                                        <div class="promo-option">
+                                            <span class="promo-option-item">
+                                                <i class="cart-radio-item"></i>
+                                                <p>Trả góp 0% qua thẻ tín dụng</p>
+                                            </span>
+                                        </div>
+                                    </aside>
+                                    <label class="promo-more-link">6 Khuyến mãi <i class="iconcart-arrow-up"></i></label>
+                                </div>
+                            </div>
+                            <div class="quantity-box">
+                                <div class="product-quantity">
+                                    <a href="javascript:;" class="product-quantity__remove"
+                                       th:data-product-id="${item.product.id}"
+                                       onclick="ajaxRemove(this.dataset.productId, this.closest('.product-item'))">Xoá</a>
+                                    <div class="product-quantity__btn">
+                                        <button type="button" class="product-quantity__btn-minus"
+                                                th:data-product-id="${item.product.id}"
+                                                th:data-price="${item.product.price}"
+                                                th:disabled="${item.quantity le 1}"
+                                                onclick="ajaxUpdateQty(this, -1)">
+                                            <i class="product-quantity__btn-minus-icon"></i>
+                                        </button>
+                                        <input type="text" class="qty-input no-spinners" readonly th:value="${item.quantity}">
+                                        <button type="button" class="product-quantity__btn-plus"
+                                                th:data-product-id="${item.product.id}"
+                                                th:data-price="${item.product.price}"
+                                                onclick="ajaxUpdateQty(this, 1)">
+                                            <i class="product-quantity__btn-plus-i-t"></i>
+                                            <i class="product-quantity__btn-plus-i-l"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subtotal -->
+            <div class="total-provisional">
+                <span class="total-product-quantity">
+                    <span class="total-label">Tạm tính </span>(<span th:text="${cartItems.size()}">1</span> sản phẩm):
+                </span>
+                <span class="temp-total-money" th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">15.490.000đ</span>
+            </div>
+        </div>
+
+        <!-- Special requests -->
+        <div class="another-option-wrapper cart-fragment">
+            <p class="another-option-title">Yêu cầu đặc biệt</p>
+            <div class="another-option-item">
+                <label class="another-option-label" onclick="this.querySelector('.iconcart-select').classList.toggle('checked')">
+                    <i class="iconcart-select"></i>
+                    <span>Hướng dẫn sử dụng, giải đáp thắc mắc sản phẩm</span>
+                </label>
+                <div class="another-option-company">
+                    <label class="another-option-label" onclick="this.querySelector('.iconcart-select').classList.toggle('checked')">
+                        <i class="iconcart-select"></i>
+                        <span>Xuất hóa đơn công ty</span>
+                    </label>
+                </div>
+                <div class="another-option-customernote">
+                    <label class="another-option-label" onclick="this.querySelector('.iconcart-select').classList.toggle('checked')">
+                        <i class="iconcart-select"></i>
+                        <span>Yêu cầu khác</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupon + VIP + Total (same card) -->
+        <div class="cart-fragment">
+            <div class="promotioncodebox">
+                <div class="promo-code-row">
+                    <i class="iconcart-coupon"></i>
+                    <p>Chọn hoặc nhập mã giảm</p>
+                    <div class="arrow"></div>
+                </div>
+            </div>
+
+            <div class="giftvip-point">
+                <div class="giftvip-left">
+                    <div><i class="sprire-cart-qtv-tgdd"></i></div>
+                    <span>Dùng điểm Quà Tặng VIP</span>
+                    <div class="toggle-switch" id="vipToggle" onclick="toggleLoyaltyPoints(this)">
+                        <div class="toggle-track"></div>
+                        <div class="toggle-dot"></div>
+                    </div>
+                </div>
+                <div id="loyaltyInfo" style="display:none; margin-top:8px; font-size:13px; color:#666;">
+                    <span>Bạn đang có <strong id="loyaltyPointsDisplay">0</strong> điểm (<strong id="loyaltyMoneyDisplay">0</strong>đ)</span>
+                </div>
+            </div>
+            <input type="hidden" name="useLoyaltyPoints" id="useLoyaltyPointsField" value="false">
+
+            <div class="area-total">
+                <div class="area-total__break-line"></div>
+                <div id="discountRow" style="display:none; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:14px; color:#28a745;">
+                    <span>Giảm điểm tích lũy</span>
+                    <span id="discountAmount">-0đ</span>
+                </div>
+                <div class="total-price">
+                    <strong>Tổng tiền</strong>
+                    <strong id="totalDisplay" th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">15.490.000đ</strong>
+                </div>
+                <div class="accumulated-point">
+                    <span>Điểm tích lũy Quà Tặng VIP</span>
+                    <span id="earnPointsDisplay" th:text="${#numbers.formatDecimal(totalAmount / 1000, 0, 'POINT', 0, 'COMMA')} + ' điểm'">15 điểm</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment methods -->
+        <div class="payment-section">
+            <div class="payment-title">Hình thức thanh toán</div>
+            <ul class="formality-pay-new">
+                <li class="itemCheck" onclick="document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function(e){e.classList.remove('active');e.querySelector('.cart-radio-item').classList.remove('active')});this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');this.querySelector('input[type=radio]').checked=true;">
+                    <i class="cart-radio-item"></i>
+                    <input type="radio" name="payment" value="MWG_PAYLATER" style="display:none">
+                    <div class="text-payment">
+                        <span class="pay-label">
+                            <i class="choose-payment-mwg-paylater"></i>
+                            <span>Qua ví MWG Paylater</span>
+                            <a href="javascript:;" class="link-register-pay">Đăng ký ngay</a>
+                        </span>
+                        <span class="payment-promotion-text">(Hạn mức đến <b>40 triệu</b>, lãi suất 0% đến 45 ngày)</span>
+                    </div>
+                </li>
+                <li class="itemCheck" onclick="document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function(e){e.classList.remove('active');e.querySelector('.cart-radio-item').classList.remove('active')});this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');this.querySelector('input[type=radio]').checked=true;">
+                    <i class="cart-radio-item"></i>
+                    <input type="radio" name="payment" value="BANKING" style="display:none">
+                    <div class="text-payment">
+                        <span class="pay-label">
+                            <i class="choose-payment-bank"></i>
+                            <span>Chuyển khoản ngân hàng</span>
+                        </span>
+                    </div>
+                </li>
+                <li class="itemCheck active" onclick="document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function(e){e.classList.remove('active');e.querySelector('.cart-radio-item').classList.remove('active')});this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');this.querySelector('input[type=radio]').checked=true;">
+                    <i class="cart-radio-item active"></i>
+                    <input type="radio" name="payment" value="COD" checked style="display:none">
+                    <div class="text-payment">
+                        <span class="pay-label">
+                            <i class="choose-payment-default"></i>
+                            <span>Thanh toán tiền mặt khi nhận hàng</span>
+                        </span>
+                    </div>
+                </li>
+                <div class="classShowmore">
+                    <li class="show-more-payment-method">
+                        <span>8 hình thức thanh toán khác</span>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <!-- Privacy policy -->
+        <div class="security-policy-checkbox active" onclick="this.classList.toggle('active')">
+            <i class="iconcart-select checked"></i>
+            <p class="text-security-policy">
+                Tôi đồng ý với
+                <a href="javascript:;" class="link-policy">Chính sách xử lý dữ liệu cá nhân</a>
+                của Thế Giới Di Động
+            </p>
+        </div>
+
+        <!-- Submit button -->
+        <div class="finaltotal">
+            <div class="finaltotal-inner">
+                <button type="submit" class="finaltotal--button-submit">Đặt hàng</button>
+            </div>
+        </div>
+    </div>
+
+    </form>
+</div>
+
+<script th:inline="javascript">
+    var totalAmount = /*[[${totalAmount}]]*/ 0;
+    var customerLoyaltyPoints = 0;
+    var loyaltyActive = false;
+
+    // AJAX update quantity
+    function ajaxUpdateQty(btn, delta) {
+        var productId = btn.dataset.productId;
+        var price = parseFloat(btn.dataset.price);
+        var qtyBox = btn.closest('.product-quantity__btn');
+        var qtyInput = qtyBox.querySelector('.qty-input');
+        var currentQty = parseInt(qtyInput.value);
+        var newQty = currentQty + delta;
+        if (newQty < 1) return;
+
+        fetch('/cart/api/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'productId=' + productId + '&quantity=' + newQty
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            qtyInput.value = newQty;
+            // disable minus if qty is 1
+            var minusBtn = qtyBox.querySelector('.product-quantity__btn-minus');
+            if (minusBtn) minusBtn.disabled = (newQty <= 1);
+            totalAmount = data.totalAmount;
+            updateSubtotal(data);
+            recalcTotal();
+        });
+    }
+
+    // AJAX remove item
+    function ajaxRemove(productId, productEl) {
+        fetch('/cart/api/remove', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'productId=' + productId
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            productEl.remove();
+            totalAmount = data.totalAmount;
+            updateSubtotal(data);
+            recalcTotal();
+            if (data.itemCount === 0) {
+                window.location.href = '/cart';
+            }
+        });
+    }
+
+    function updateSubtotal(data) {
+        var countEl = document.querySelector('.total-product-quantity span:nth-child(2)');
+        if (!countEl) {
+            // fallback: find the span inside total-product-quantity that has the number
+            var spans = document.querySelectorAll('.total-product-quantity span');
+            for (var i = 0; i < spans.length; i++) {
+                if (!isNaN(parseInt(spans[i].textContent))) { countEl = spans[i]; break; }
+            }
+        }
+        if (countEl) countEl.textContent = data.itemCount;
+        var tempTotal = document.querySelector('.temp-total-money');
+        if (tempTotal) tempTotal.textContent = data.totalAmount.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Lookup loyalty points when phone field loses focus
+    var phoneInput = document.querySelector('input[name="phone"]');
+    var nameInput = document.querySelector('input[name="customerName"]');
+
+    phoneInput.addEventListener('blur', function() {
+        var phone = this.value.trim();
+        if (phone.length >= 9) {
+            fetch('/api/customer/points?phone=' + encodeURIComponent(phone))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    customerLoyaltyPoints = data.loyaltyPoints || 0;
+                    if (data.found && data.customerName && !nameInput.value.trim()) {
+                        nameInput.value = data.customerName;
+                    }
+                    updateLoyaltyDisplay();
+                });
+        }
+    });
+
+    function updateLoyaltyDisplay() {
+        var infoDiv = document.getElementById('loyaltyInfo');
+        var pointsSpan = document.getElementById('loyaltyPointsDisplay');
+        var moneySpan = document.getElementById('loyaltyMoneyDisplay');
+
+        if (customerLoyaltyPoints > 0) {
+            infoDiv.style.display = 'block';
+            pointsSpan.textContent = customerLoyaltyPoints.toLocaleString('vi-VN');
+            moneySpan.textContent = customerLoyaltyPoints.toLocaleString('vi-VN');
+        } else {
+            infoDiv.style.display = 'none';
+        }
+        recalcTotal();
+    }
+
+    function toggleLoyaltyPoints(el) {
+        if (customerLoyaltyPoints <= 0) {
+            return;
+        }
+        el.classList.toggle('on');
+        loyaltyActive = el.classList.contains('on');
+        document.getElementById('useLoyaltyPointsField').value = loyaltyActive ? 'true' : 'false';
+        recalcTotal();
+    }
+
+    function recalcTotal() {
+        var discount = 0;
+        var discountRow = document.getElementById('discountRow');
+        var discountAmt = document.getElementById('discountAmount');
+        var totalEl = document.getElementById('totalDisplay');
+        var earnEl = document.getElementById('earnPointsDisplay');
+
+        if (loyaltyActive && customerLoyaltyPoints > 0) {
+            discount = Math.min(customerLoyaltyPoints, totalAmount);
+            discountRow.style.display = 'flex';
+            discountAmt.textContent = '-' + discount.toLocaleString('vi-VN') + 'đ';
+        } else {
+            discountRow.style.display = 'none';
+        }
+
+        var finalTotal = totalAmount - discount;
+        totalEl.textContent = finalTotal.toLocaleString('vi-VN') + 'đ';
+
+        var earnPoints = Math.floor(finalTotal / 1000);
+        earnEl.textContent = earnPoints.toLocaleString('vi-VN') + ' điểm';
+    }
+</script>
+
+</section>
+</body>
+</html>

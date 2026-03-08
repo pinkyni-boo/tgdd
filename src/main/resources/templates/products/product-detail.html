@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${product.name} + ' - Thế Giới Di Động'">Chi tiết sản phẩm</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Breadcrumb -->
+    <div class="product-detail-page">
+        <div class="breadcrumb-detail">
+            <a href="/">Trang chủ</a>
+            <span>&gt;</span>
+            <a href="/" th:if="${product.category != null}" th:text="${product.category.name}">Danh mục</a>
+            <span th:if="${product.category != null}">&gt;</span>
+            <span class="current" th:text="${product.name}">Tên sản phẩm</span>
+        </div>
+
+        <!-- Main product section -->
+        <div class="detail-container">
+            <!-- LEFT: Product image -->
+            <div class="detail-left">
+                <div class="detail-image-main">
+                    <img th:src="${product.image}" th:alt="${product.name}" id="mainImage">
+                </div>
+                <div class="detail-image-thumbs">
+                    <div class="thumb active">
+                        <img th:src="${product.image}" th:alt="${product.name}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Product info -->
+            <div class="detail-right">
+                <h1 class="detail-product-name" th:text="${product.name}">Samsung Galaxy A56 5G</h1>
+
+                <!-- Rating -->
+                <div class="detail-rating">
+                    <div class="stars">
+                        <i class="star filled">&#9733;</i>
+                        <i class="star filled">&#9733;</i>
+                        <i class="star filled">&#9733;</i>
+                        <i class="star filled">&#9733;</i>
+                        <i class="star">&#9733;</i>
+                    </div>
+                    <span class="rating-count">42 đánh giá</span>
+                </div>
+
+                <!-- Price block -->
+                <div class="detail-price-box">
+                    <div class="detail-price-current">
+                        <span class="price-main" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')} + '₫'">9.490.000₫</span>
+                        <span class="price-discount-badge" th:if="${product.discount gt 0}" th:text="'-' + ${#numbers.formatDecimal(product.discount, 0, 'POINT', 0, 'COMMA')} + '%'">-12%</span>
+                    </div>
+                    <div class="detail-price-old" th:if="${product.discount gt 0}">
+                        <span th:text="${#numbers.formatDecimal(product.price * 100 / (100 - product.discount), 0, 'POINT', 0, 'COMMA')} + '₫'">10.790.000₫</span>
+                    </div>
+                </div>
+
+                <!-- Promotion box -->
+                <div class="detail-promo-box">
+                    <div class="promo-title">
+                        <img width="18" height="18" src="//cdnv2.tgdd.vn/webmwg/2024/ContentMwg/images/homev2/flash-sale.png" alt="promo"/>
+                        <strong>Khuyến mãi</strong>
+                    </div>
+                    <ul class="promo-list">
+                        <li>
+                            <span class="promo-tag">KM</span>
+                            Giảm giá đặc biệt khi mua online
+                        </li>
+                        <li>
+                            <span class="promo-tag">KM</span>
+                            Trả góp 0% qua thẻ tín dụng
+                        </li>
+                        <li>
+                            <span class="promo-tag">KM</span>
+                            Bảo hành chính hãng 12 tháng
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Add to cart buttons -->
+                <div class="detail-actions">
+                    <a th:href="@{/cart/buy-now(productId=${product.id}, quantity=1)}"
+                       class="btn-addcart-main">
+                        <strong>MUA NGAY</strong>
+                        <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
+                    </a>
+                    <div class="detail-actions-secondary">
+                        <a th:href="@{/cart/add(productId=${product.id}, quantity=1)}"
+                           class="btn-addcart-sub">
+                            <strong>Thêm giỏ hàng</strong>
+                            <span>Xem giỏ hàng</span>
+                        </a>
+                        <a th:href="@{/cart/add(productId=${product.id}, quantity=1)}"
+                           class="btn-addcart-sub">
+                            <strong>Trả góp 0%</strong>
+                            <span>Qua thẻ tín dụng</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Store info -->
+                <div class="detail-store-info">
+                    <div class="store-item">
+                        <span class="store-icon">&#128666;</span>
+                        <span>Giao hàng toàn quốc</span>
+                    </div>
+                    <div class="store-item">
+                        <span class="store-icon">&#128179;</span>
+                        <span>Thanh toán khi nhận hàng (COD)</span>
+                    </div>
+                    <div class="store-item">
+                        <span class="store-icon">&#128260;</span>
+                        <span>Đổi trả trong 30 ngày</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product description -->
+        <div class="detail-description-box">
+            <h2 class="desc-title">Mô tả sản phẩm</h2>
+            <div class="desc-content" th:if="${product.description != null and !product.description.isEmpty()}">
+                <p th:utext="${product.description}">Mô tả chi tiết sản phẩm...</p>
+            </div>
+            <div class="desc-content" th:if="${product.description == null or product.description.isEmpty()}">
+                <p>
+                    <strong th:text="${product.name}">Sản phẩm</strong> là sản phẩm chính hãng được phân phối bởi Thế Giới Di Động.
+                    Sản phẩm được bảo hành 12 tháng tại các trung tâm bảo hành trên toàn quốc.
+                </p>
+                <p>Với thiết kế hiện đại, hiệu năng mạnh mẽ, sản phẩm đáp ứng tốt mọi nhu cầu từ giải trí đến công việc hàng ngày.</p>
+            </div>
+        </div>
+
+        <!-- Related products -->
+        <div class="detail-related" th:if="${relatedProducts != null and !relatedProducts.isEmpty()}">
+            <h2 class="related-title">Sản phẩm tương tự</h2>
+            <div class="related-grid">
+                <div class="related-item" th:each="rp : ${relatedProducts}">
+                    <a th:href="@{'/products/' + ${rp.id}}">
+                        <div class="related-img">
+                            <img th:src="${rp.image}" th:alt="${rp.name}">
+                        </div>
+                        <h3 th:text="${rp.name}">Sản phẩm liên quan</h3>
+                        <strong class="related-price">
+                            <span th:text="${#numbers.formatDecimal(rp.price, 0, 'POINT', 0, 'COMMA')} + '₫'">9.490.000₫</span>
+                        </strong>
+                        <span class="related-discount" th:if="${rp.discount gt 0}" th:text="'-' + ${#numbers.formatDecimal(rp.discount, 0, 'POINT', 0, 'COMMA')} + '%'">-12%</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end product-detail-page -->
+
+</div>
+</body>
+</html>

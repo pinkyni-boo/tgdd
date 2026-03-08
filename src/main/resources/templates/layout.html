@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/head :: head}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thegioididong.com</title>
+</head>
+<body class="layout-locationnew v2024">
+
+    <!-- ===== HEADER (top banner + navigation bar) ===== -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- ===== HEADER OVERLAYS (exact TGDD) ===== -->
+    <div class="header-overlay">
+        <div>
+            <a href="javascript:;">X</a>
+        </div>
+    </div>
+    <div class="header-mask"></div>
+    <div class="popupPMH"></div>
+    <div class="locationbox__overlay"></div>
+
+    <!-- ===== LOCATION BOX v2024 (exact TGDD structure) ===== -->
+    <div class="locationbox-v2 v2024 has-suggest-address v2025">
+        <div class="locationbox__item locationbox__item--right">
+            <div class="top-location">
+                <b>Chọn địa chỉ nhận hàng</b>
+                <p class="full-location">
+                    <span class="choose-text hide">Khu vực đã chọn</span>
+                    <span class="fulladdress-v2 hide"></span>
+                    <a href="javascript:;" class="resetLocation hide">Thiết lập lại</a>
+                </p>
+                <a class="cls-location" href="javascript:;"><i class="close-symbol"></i></a>
+                <div class="parentBack"><a class="cls-back" href="javascript:;"></a></div>
+            </div>
+            <div class="location-select">
+                <div class="location-milestone hide">
+                    <i class="step-province"></i><i class="row-select"></i><i class="step-ward"></i>
+                </div>
+                <div class="lst-tab hide location-v4">
+                    <a href="javascript:;" data-list="#lst-prov" class="active">
+                        <div class="title-prov">Chọn Tỉnh/Thành</div>
+                        <span class="txt-prov-old">Vui lòng chọn Tỉnh/Thành bên dưới</span>
+                    </a>
+                    <a href="javascript:;" data-list="#lst-ward" class="disable">
+                        <div class="title-ward">Chọn Phường/Xã</div>
+                        <span class="txt-ward-old hide">Vui lòng chọn Phường/Xã bên dưới</span>
+                    </a>
+                </div>
+            </div>
+            <div class="location-search hide">
+                <i class="icon-search"></i>
+                <input id="locationSearch" name="locationSearch" placeholder="Tìm nhanh tỉnh thành, phường xã"/>
+                <a href="javascript:;" class="clear-searchbox"><span class="box-relative"><i class="close-itemv3"></i></span></a>
+            </div>
+            <div class="location-suggestaddress">
+                <i class="icon-search"></i>
+                <input id="locationSuggestAddress" name="locationSuggestAddress" placeholder="Nhập địa chỉ (Tòa nhà, Số nhà, Tên đường,...) để gợi ý"/>
+                <a href="javascript:;" class="clear-suggestaddress"><span class="box-relative"><i class="close-itemv3"></i></span></a>
+            </div>
+        </div>
+        <div class="listing-location">
+            <div id="suggest-location"></div>
+            <div id="suggest-address" style="display:block;">
+                <div class="choose-province"><span>Hoặc</span></div>
+                <a href="javascript:;" class="suggest-address-notfound">
+                    Chọn địa chỉ<span>Nhập địa chỉ theo Tỉnh/TP, Phường/Xã</span>
+                </a>
+                <ul class="suggest-location"></ul>
+                <input type="hidden" name="suggest-address-ss" value="">
+            </div>
+            <img class="img-location" src="https://cdnv2.tgdd.vn/mwg-static/common/sample/bro638962249653176064.png"/>
+            <div class="search-not-found hide">
+                <img class="img-not-found" src="https://cdnv2.tgdd.vn/mwg-static/common/sample/no%20result638962242315596375.png" alt="not found"/>
+                <h3>Không tìm thấy kết quả phù hợp</h3>
+                <span>Hãy thử lại với từ khoá khác</span>
+            </div>
+            <div id="lst-prov" class="lst-location hide">
+                <div class="listing-locale"><ul>
+                    <li><a class="province-name" data-value="1027" href="javascript:;">Thành phố Hồ Chí Minh</a></li>
+                    <li><a class="province-name" data-value="1000" href="javascript:;">Thành phố Hà Nội</a></li>
+                    <li><a class="province-name" data-value="1020" href="javascript:;">Thành phố Đà Nẵng</a></li>
+                    <li><a class="province-name" data-value="1012" href="javascript:;">Thành phố Hải Phòng</a></li>
+                    <li><a class="province-name" data-value="1032" href="javascript:;">Thành phố Cần Thơ</a></li>
+                    <li><a class="province-name" data-value="1019" href="javascript:;">Thành phố Huế</a></li>
+                    <li><a class="province-name" data-value="1031" href="javascript:;">Tỉnh An Giang</a></li>
+                    <li><a class="province-name" data-value="1010" href="javascript:;">Tỉnh Bắc Ninh</a></li>
+                    <li><a class="province-name" data-value="1026" href="javascript:;">Tỉnh Đồng Nai</a></li>
+                    <li><a class="province-name" data-value="1022" href="javascript:;">Tỉnh Gia Lai</a></li>
+                    <li><a class="province-name" data-value="1023" href="javascript:;">Tỉnh Khánh Hòa</a></li>
+                    <li><a class="province-name" data-value="1016" href="javascript:;">Tỉnh Nghệ An</a></li>
+                    <li><a class="province-name" data-value="1015" href="javascript:;">Tỉnh Thanh Hóa</a></li>
+                </ul></div>
+            </div>
+            <a href="javascript:;" class="suggest-address-back">Nhập bằng gợi ý địa chỉ</a>
+        </div>
+        <div id="lst-ward" class="lst-location hide"></div>
+        <div id="lst-address" class="lst-location hide">
+            <span>Số nhà, tên đường</span>
+            <input type="text" id="hdLocationAddress" name="hdLocationAddress" maxlength="255" value="" placeholder="Nhập số nhà, tên đường" autocomplete="off"/>
+            <label>Vui lòng nhập địa chỉ số nhà, tên đường để giao hàng.</label>
+        </div>
+        <div class="location-confirm hide">
+            <a href="javascript:;">Xác nhận địa chỉ</a>
+        </div>
+        <input type="hidden" id="hdLocationAddressId" value="-1">
+        <input type="hidden" id="hdLocationProvinceId" value="0">
+        <input type="hidden" id="hdLocationFullAddress" value="">
+        <input type="hidden" id="hdLocationWardId" value="0">
+        <input type="hidden" id="hdLocationDefault" value="false">
+        <b id="h-provincename" style="display:none!important" data-provinceid="0"></b>
+        <div class="locationbox__address">
+            <a href="javascript:;"><i class="close-symbol"></i></a>
+            <b>Thông tin giao hàng</b>
+            <ul></ul>
+            <a href="javascript:;" class="btn-add">Thêm thông tin địa chỉ giao hàng mới</a>
+            <a href="javascript:;" class="btn-confirm">Xác nhận</a>
+        </div>
+    </div>
+    <div class="locationbox__popup new-popup hide" id="lc_pop--sugg">
+        <div class="locationbox__popup--cnt locationbox__popup--suggestion new-locale">
+            <div class="flex-block">
+                <i class="icon-location"></i>
+                <p>Hãy chọn <b>địa chỉ cụ thể</b> để chúng tôi cung cấp <b>chính xác</b> giá và khuyến mãi</p>
+            </div>
+            <div class="btn-block">
+                <a href="javascript:;" class="btn-location"><b>Chọn địa chỉ</b></a>
+                <a href="javascript:;" class="btn-location gray"><b>Đóng</b></a>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" data-location-twolevel="True"/>
+
+    <!-- ===== MAIN BODY CONTENT (injected by child pages) ===== -->
+    <main class="main-container">
+        <div layout:fragment="content">
+            <!-- Child page content is placed here by Thymeleaf Layout Dialect -->
+        </div>
+    </main>
+
+    <!-- ===== FOOTER (links, social, scripts) ===== -->
+    <th:block th:unless="${hideFooter}">
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </th:block>
+
+    <!-- ===== PAGE UTILITIES ===== -->
+    <div class="preloader preall"><div class="loaderweb"></div></div>
+    <p id="gb-top-page" class="hide">↑</p>
+    <div id="showPromoteBHX"></div>
+    <div id="dldingtext">Bạn vui lòng chờ trong giây lát...</div>
+
+    <!-- TGDD global bundle -->
+    <script src="//cdn.tgdd.vn/mwgcart/mwgcore/js/bundle/globalTGDD_V2.min.v202603041020.js"></script>
+
+</body>
+</html>

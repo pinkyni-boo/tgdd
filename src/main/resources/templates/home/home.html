@@ -1,0 +1,662 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Trang Chủ - thegioididong.com</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f3f3; }
+        .main-container { max-width: 1200px; margin: 0 auto; }
+
+        /* Hot promotion block */
+        .hot-promotion.homeproducts-block {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .hot-promotion.homeproducts-block h3 {
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        /* Tabs */
+        .promo-tabs {
+            background-color: #fff;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: stretch;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            border-right: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .tab-item:last-child { border-right: none; }
+        .tab-item:hover { background-color: #f9f9f9; }
+        .tab-item.active {
+            background-color: #fff8e1;
+            position: relative;
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ff9800;
+        }
+        .tab-text { font-weight: bold; }
+        .tab-special { color: #d32f2f; }
+        .tab-special .main-text { font-weight: bold; font-size: 16px; }
+        .tab-special .sub-text { font-size: 11px; margin-top: 2px; }
+        .flash-icon { display: inline-block; margin-right: 2px; }
+
+        /* Timeline */
+        .timeline-title { padding: 10px 15px 0; }
+        .listing-timeline {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        .listing-timeline a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: #F2F4F7;
+            text-decoration: none;
+            color: #344054;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .listing-timeline a.active { background: #F79009; color: #fff; }
+        .listing-timeline a.active > span { color: #fff; }
+        .countdown-timer {
+            display: flex;
+            gap: 3px;
+            margin-top: 4px;
+        }
+        .countdown-timer label {
+            background: #fff;
+            color: #F79009;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 14px;
+            min-width: 26px;
+            text-align: center;
+        }
+        .listing-timeline a:not(.active) .countdown-timer label {
+            color: #344054;
+        }
+        .title-end { font-size: 12px; }
+
+        /* Product list */
+        .listproduct {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            padding: 15px;
+            list-style: none;
+            margin: 0;
+        }
+        .listproduct.slider-flashsale { display: flex; overflow-x: auto; padding-bottom: 10px; }
+        .listproduct.slider-flashsale .item { min-width: 175px; }
+
+        .item {
+            border: 1px solid #f1f1f1;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.1); border-color: #288ad6; }
+
+        .item-img {
+            position: relative;
+            padding-bottom: 100%;
+            margin-bottom: 8px;
+        }
+        .item-img img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+        }
+        .item h3 {
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 1.4;
+            height: 36px;
+            overflow: hidden;
+            margin: 4px 0;
+            color: #333;
+        }
+        .item .main-contain { text-decoration: none; color: inherit; display: block; }
+
+        /* Price */
+        strong.price {
+            display: block;
+            color: #d0021c;
+            font-size: 15px;
+            margin: 4px 0;
+        }
+        .price-and-discount { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+        .price-old { text-decoration: line-through; color: #999; font-size: 12px; font-weight: normal; }
+        .price-and-discount small {
+            background: #feecec;
+            color: #d0021c;
+            font-size: 11px;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        /* Flash sale quantity bar */
+        .fs-contain {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .rq_count.fscount {
+            flex: 1;
+            background: #f1f1f1;
+            border-radius: 10px;
+            height: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .fs-iconfire {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, #ff6a00, #ee0979);
+            border-radius: 10px;
+        }
+        .rq_count.fscount b {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            color: #fff;
+            white-space: nowrap;
+            font-weight: normal;
+        }
+
+        /* Buy buttons */
+        .btn-buy {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .btn-buy a {
+            flex: 1;
+            text-align: center;
+            padding: 6px 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-decoration: none;
+            border: 1px solid #288ad6;
+            color: #288ad6;
+            background: #fff;
+        }
+        .btn-buy a.buy-now { background: #288ad6; color: #fff; }
+        .btn-buy a.buy-now:hover { background: #1a6aad; }
+        .btn-buy a.see-detail.hide { display: none; }
+
+        .block-products.relative { padding: 0 0 10px; }
+
+        /* Second promo section - products-tabs (ul/li style) */
+        .products-tabs {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #fff;
+            border-bottom: 2px solid #f1f1f1;
+            overflow-x: auto;
+        }
+        .products-tabs li {
+            flex: 1;
+            min-width: 90px;
+            text-align: center;
+            padding: 10px 8px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #333;
+            min-height: 52px;
+            border-right: 1px solid #f0f0f0;
+        }
+        /* Image-based campaign tabs get 2.5x more flex space than text tabs */
+        .products-tabs li:not(.tab-text) {
+            flex: 2.5;
+            min-width: 160px;
+        }
+        .products-tabs li:last-child { border-right: none; }
+        .products-tabs li img {
+            max-width: 100%;
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+        .products-tabs li.active-tab {
+            background-color: #FFF6E3;
+            border-bottom-color: #F79009;
+            font-weight: bold;
+        }
+        .products-tabs li .tab-text,
+        .products-tabs li span { font-weight: bold; }
+
+        /* Flashsale bar (yellow) */
+        .flashsale-bar {
+            background: #ffec80;
+            padding: 12px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .flashsale-bar .timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+        .flashsale-bar .timer .box {
+            background: #000;
+            color: #fff;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .flashsale-bar .next-time {
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* Direct anchor btn-buy */
+        a.btn-buy {
+            display: block;
+            background: #288ad6;
+            color: #fff;
+            text-align: center;
+            padding: 7px 4px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 8px;
+        }
+        a.btn-buy:hover { background: #1a6aad; }
+
+        /* active alias for products-tabs */
+        .products-tabs li.active {
+            background-color: #FFF6E3;
+            border-bottom: 3px solid #F79009;
+            font-weight: bold;
+        }
+
+        /* fs-new-item tab structure */
+        .products-tabs.col9 { display: flex; overflow: hidden; }
+        .products-tabs.col9 li { width: auto; flex: 1 1 0; min-width: 0; padding: 0; min-height: 52px; }
+        .products-tabs.col9 li:not(.tab-text):not([data-groupid="9776"]):not([data-groupid="9845"]):not([data-groupid="9777"]):not([data-groupid="9778"]):not([data-groupid="9846"]):not([data-groupid="10528"]) {
+            flex: 2; min-width: 0;
+        }
+        .fs-new-item-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            min-height: 52px;
+            padding: 6px 4px;
+            text-decoration: none;
+            color: #333;
+        }
+        .fs-new-item-title img {
+            max-width: 100%;
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+        .fs-new-item-title .allimg {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+        }
+        .products-tabs li.active-tab .fs-new-item-title,
+        .products-tabs li.active .fs-new-item-title { color: #d0021c; }
+
+        /* Sticky countdown bar */
+        .sticky-countdown {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 20px;
+            background: #fff;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .sticky-countdown .countdown-timer {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        .sticky-countdown .countdown-timer label {
+            font-weight: normal;
+            font-size: 13px;
+            color: #555;
+        }
+        .sticky-countdown .countdown-timer span {
+            background: #000;
+            color: #ffd400;
+            font-weight: bold;
+            padding: 3px 7px;
+            border-radius: 3px;
+            font-size: 15px;
+            min-width: 28px;
+            text-align: center;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="festival-left">
+        <div data-banner="110407">
+            <a aria-label="slide" href="https://www.thegioididong.com/khuyen-mai-laptop">
+                <img class="lazyloaded" src="//cdnv2.tgdd.vn/mwg-static/tgdd/Banner/71/8f/718f67cd479760158b1fa5546cd09ef0.png" alt="Site sticky banner trái">
+            </a>
+        </div>
+    </div>
+    <div class="festival-right">
+        <div data-banner="109041">
+            <a aria-label="slide" href="https://www.thegioididong.com/khuyen-mai-laptop">
+                <img class="lazyloaded" src="//cdnv2.tgdd.vn/mwg-static/tgdd/Banner/71/8f/718f67cd479760158b1fa5546cd09ef0.png" alt="Site sticky banner phải">
+            </a>
+        </div>
+    </div>
+    <div class="body-home" style="max-width: 1200px; margin: 0 auto;">
+        <div class="big-banner">
+            <a href="#">
+                <img src="//cdnv2.tgdd.vn/mwg-static/tgdd/Banner/10/a7/10a75948efc3dc81a81b405dae99461a.jpg" alt="Banner Big" width="1200">
+            </a>
+        </div>
+
+        <section class="main-container hot-promotion homeproducts-block">
+            <h3 style="padding-left: 10px;">Khuyến mãi online</h3>
+
+            <ul class="products-tabs col9">
+                <li class="active-tab fs-new-item" data-groupid="-1" data-id="flashsale" data-is-flashsale-tab="true">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <img src="https://cdnv2.tgdd.vn/mwg-static/common/Campaign/8a/5c/8a5c223deb851bcc8f713215485e4159.png" alt="FlashSale">
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="10962" data-id="flashsaleCross">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <img src="https://cdnv2.tgdd.vn/mwg-static/common/Campaign/c0/64/c064486535cfa403ef9dc997848e1720.png" alt="Flashsale">
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="9788" data-id="kmo">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <img src="https://cdnv2.tgdd.vn/mwg-static/common/Campaign/7a/e0/7ae0723d3d978fd4c8a2c77f3bf4bd3a.png" alt="Online Only">
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="9776" data-id="kmo">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <span class="allimg">Điện Thoại</span>
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="9845" data-id="kmo">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <span class="allimg">Apple</span>
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="9777" data-id="kmo">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <span class="allimg">Laptop</span>
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="9778" data-id="kmo">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <span class="allimg">Phụ Kiện</span>
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="9846" data-id="kmo">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <span class="allimg">Đồng Hồ</span>
+                    </a>
+                </li>
+                <li class="fs-new-item" data-groupid="10528" data-id="PC">
+                    <a href="javascript:;" class="fs-new-item-title">
+                        <span class="allimg">PC, Máy in</span>
+                    </a>
+                </li>
+            </ul>
+
+            <style>
+                .hot-promotion.homeproducts-block .products-tabs li.active-tab {
+                    border-color: #F79009 !important;
+                    background-color: #FFF6E3 !important;
+                }
+                .block-products.relative.has-flashsale {
+                    background-color: #FFF6E3 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs {
+                    background-color: #FFF6E3 !important;
+                }
+                .hot-promotion.homeproducts-block .listproduct {
+                    background-color: #FFF6E3 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a {
+                    background-color: #F2F4F7 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a > span {
+                    color: #344054 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a.active {
+                    background-color: #F79009 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a.active > span {
+                    color: #FFFFFF !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a .countdown-timer label {
+                    color: #344054 !important;
+                    background-color: #FFFFFF !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a.active .countdown-timer label {
+                    color: #F79009 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a .title-end {
+                    color: #344054 !important;
+                }
+                .hot-promotion.homeproducts-block .theme-fs .timeline-title .listing-timeline a.active .title-end {
+                    color: #FFFFFF !important;
+                }
+            </style>
+
+            <div class="block-products relative has-flashsale">
+                <div class="preloader" style="display:none;"><div class="loaderweb"></div></div>
+
+                <!-- Tab 1: FlashSale -->
+                <div class="box-common__content" data-is-flashsale-tab="true" data-groupid="-1">
+                    <div class="flashsale-block theme-fs" id="flashsale">
+                        <div class="stage-two" style="display: none;"><div class="load"></div></div>
+                        <div class="timeline-title" data-programid="102">
+                            <div class="listing-timeline col5 full">
+                                <a href="javascript:;" class="endtime hide" data-countdown="3/8/2026 9:29:00 PM" data-begin="3/8/2026 6:00:00 PM" data-ishappening="True">
+                                    <span class="title-end">Chỉ còn: <br></span>
+                                    <span class="countdown-timer">
+                                        <label id="hour">00</label>
+                                        <label id="minute">00</label>
+                                        <label id="second">01</label>
+                                    </span>
+                                </a>
+                                <a href="javascript:;" class="new active">
+                                    <span>Sắp diễn ra </span>
+                                    <span>21:30</span>
+                                </a>
+                                <a href="javascript:;" class="new">
+                                    <span>Ngày mai </span>
+                                    <span>00:00</span>
+                                </a>
+                                <a href="javascript:;" class="new">
+                                    <span>Ngày mai </span>
+                                    <span>09:00</span>
+                                </a>
+                                <a href="javascript:;" class="new">
+                                    <span>Ngày mai </span>
+                                    <span>12:00</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="box-scroll">
+                            <div class="listproduct slider-flashsale two-line has-scroll">
+
+                                <!-- Dynamic Flash Sale products from DB -->
+                                <div class="item" th:each="product : ${flashSaleProducts}" th:attr="data-id=${product.id}">
+                                    <a th:href="@{'/products/' + ${product.id}}" class="main-contain">
+                                        <div class="item-img">
+                                            <img th:src="${product.image != null and (product.image.startsWith('http') or product.image.startsWith('//'))} ? ${product.image} : '/product-images/' + ${product.image}" th:alt="${product.name}" width="207" height="207"/>
+                                        </div>
+                                        <h3 th:text="${product.name}">Tên sản phẩm</h3>
+                                        <strong class="price">
+                                            <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'COMMA') + '₫'}">0₫</span>
+                                            <span class="price-and-discount" th:if="${product.discount > 0}">
+                                                <label class="price-old black" th:text="${#numbers.formatDecimal(product.price / (1 - product.discount / 100.0), 1, 'POINT', 0, 'COMMA') + '₫'}">0₫</label>
+                                                <small th:text="${'-' + #numbers.formatInteger(product.discount, 0) + '%'}">-0%</small>
+                                            </span>
+                                        </strong>
+                                        <div class="fs-contain">
+                                            <img width="15" height="15" src="//cdnv2.tgdd.vn/webmwg/2024/ContentMwg/images/homev2/flash-sale.png" alt="icon flashsale">
+                                            <span class="rq_count fscount">
+                                                <i style="width:50%;" class="fs-iconfire"></i>
+                                                <b>Còn hàng</b>
+                                            </span>
+                                        </div>
+                                    </a>
+                                    <div class="btn-buy">
+                                        <a th:href="@{/cart/add(productId=${product.id},quantity=1)}" class="buy-now">Mua ngay</a>
+                                    </div>
+                                </div>
+                                <div th:if="${#lists.isEmpty(flashSaleProducts)}" style="padding: 20px; text-align: center; color: #999; min-width: 200px;">
+                                    <p>Chưa có sản phẩm Flash Sale. Thêm sản phẩm và tích chọn Flash Sale.</p>
+                                </div>
+
+
+                            </div><!-- end listproduct -->
+                        </div><!-- end box-scroll -->
+                    </div><!-- end flashsale-block -->
+                </div><!-- end box-common__content -->
+            </div><!-- end block-products -->
+        </section><!-- end hot-promotion -->
+
+        <!-- All Products Section -->
+        <section class="main-container hot-promotion homeproducts-block" style="margin-top: 16px;">
+            <h3 style="padding-left: 10px;">Tất cả sản phẩm</h3>
+            <div class="listproduct" style="padding: 15px;">
+                <div class="item" th:each="product : ${products}" th:attr="data-id=${product.id}">
+                    <a th:href="@{'/products/' + ${product.id}}" class="main-contain">
+                        <div class="item-img">
+                            <img th:src="${product.image != null and (product.image.startsWith('http') or product.image.startsWith('//'))} ? ${product.image} : '/product-images/' + ${product.image}" th:alt="${product.name}" width="207" height="207"/>
+                        </div>
+                        <h3 th:text="${product.name}">Tên sản phẩm</h3>
+                        <strong class="price">
+                            <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'COMMA') + '₫'}">0₫</span>
+                            <span class="price-and-discount" th:if="${product.discount > 0}">
+                                <label class="price-old" th:text="${#numbers.formatDecimal(product.price / (1 - product.discount / 100.0), 1, 'POINT', 0, 'COMMA') + '₫'}">0₫</label>
+                                <small th:text="${'-' + #numbers.formatInteger(product.discount, 0) + '%'}">-0%</small>
+                            </span>
+                        </strong>
+                    </a>
+                    <div class="btn-buy">
+                        <a th:href="@{/cart/add(productId=${product.id},quantity=1)}" class="buy-now">Mua ngay</a>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(products)}" style="grid-column: 1/-1; padding: 20px; text-align: center; color: #999;">
+                    <p>Chưa có sản phẩm nào. Vui lòng thêm sản phẩm trong phần quản trị.</p>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- end body-home -->
+    <script>
+        // Đếm ngược Flash Sale section 2
+        (function () {
+            var endTime2 = new Date("3/8/2026 9:29:00 PM").getTime();
+            var h2 = document.getElementById('hour2');
+            var m2 = document.getElementById('minute2');
+            var s2 = document.getElementById('second2');
+            var h2b = document.getElementById('hour2b');
+            var m2b = document.getElementById('minute2b');
+            var s2b = document.getElementById('second2b');
+            function pad(n) { return n < 10 ? '0' + n : n; }
+            function tick2() {
+                var diff = Math.max(0, Math.floor((endTime2 - Date.now()) / 1000));
+                var hv = pad(Math.floor(diff / 3600));
+                var mv = pad(Math.floor((diff % 3600) / 60));
+                var sv = pad(diff % 60);
+                if (h2) h2.textContent = hv;
+                if (m2) m2.textContent = mv;
+                if (s2) s2.textContent = sv;
+                if (h2b) h2b.textContent = hv;
+                if (m2b) m2b.textContent = mv;
+                if (s2b) s2b.textContent = sv;
+                if (diff > 0) setTimeout(tick2, 1000);
+            }
+            tick2();
+        })();
+
+        // Đếm ngược Flash Sale
+        (function () {
+            var endTime = new Date("3/8/2026 9:29:00 PM").getTime();
+            var hourEl = document.getElementById('hour');
+            var minEl  = document.getElementById('minute');
+            var secEl  = document.getElementById('second');
+
+            function pad(n) { return n < 10 ? '0' + n : n; }
+
+            function tick() {
+                var now  = Date.now();
+                var diff = Math.max(0, Math.floor((endTime - now) / 1000));
+                hourEl.textContent = pad(Math.floor(diff / 3600));
+                minEl.textContent  = pad(Math.floor((diff % 3600) / 60));
+                secEl.textContent  = pad(diff % 60);
+                if (diff > 0) setTimeout(tick, 1000);
+            }
+            tick();
+        })();
+    </script>
+</div>
+</body>
+</html>

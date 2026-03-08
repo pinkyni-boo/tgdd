@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Update Product</title>
+</head>
+<body>
+<section layout:fragment="content">
+<div class="main-container admin-page">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <h3 class="section-title">Cập Nhật Sản Phẩm</h3>
+                <form th:action="@{/products/update/{id}(id=${product.id})}"
+                      th:object="${product}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    
+                    <div class="row">
+                         <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Tên sản phẩm:</label>
+                            <input type="text" th:field="*{name}" class="form-control" id="name" required autocomplete="name">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label">Giá bán (VNĐ):</label>
+                            <input type="number" step="1000" th:field="*{price}" class="form-control" id="price" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="discount" class="form-label">Giảm giá (%):</label>
+                            <input type="number" step="1" min="0" max="100" th:field="*{discount}" class="form-control" id="discount">
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-center">
+                            <div class="form-check mt-3">
+                                <input type="checkbox" class="form-check-input" id="isPromotional" th:field="*{promotional}">
+                                <label class="form-check-label fw-bold text-danger" for="isPromotional">🔥 Flash Sale (Hiển thị ở tab Flash Sale trang chủ)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Danh mục:</label>
+                         <div class="input-group">
+                            <select th:field="*{category}" class="form-select" id="category">
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}" th:text="${category.name}" th:selected="${category.id == product.category.id}"></option>
+                            </select>
+                             <a th:href="@{/categories/add}" class="btn btn-outline-secondary" title="Thêm danh mục mới">+</a>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="imageUrl" class="form-label">Hoặc nhập URL Hình ảnh (Nếu không tải file):</label>
+                        <input type="text" class="form-control" id="imageUrl" th:field="*{image}" placeholder="https://example.com/image.png">
+                    </div>
+
+                     <div class="mb-3">
+                        <label for="image" class="form-label">Hình ảnh sản phẩm:</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <div th:if="${product.image != null}" class="border rounded p-1">
+                                <img th:src="@{'/product-images/' + ${product.image}}" width="80" height="80" 
+                                     style="object-fit: cover; border: 1px solid #ddd;" />
+                            </div>
+                            <div class="flex-grow-1">
+                                 <input type="file" name="imageFile" class="form-control" id="image" accept="image/png, image/jpeg" />
+                                 <div class="form-text">Chọn ảnh mới để thay thế (PNG, JPG).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Mô tả chi tiết:</label>
+                        <textarea th:field="*{description}" class="form-control"
+                                  id="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="mt-4 text-end">
+                         <a th:href="@{/products}" class="btn btn-secondary me-2">Hủy bỏ</a>
+                         <button type="submit" class="btn btn-tgdd" style="width: auto; padding: 10px 30px;">Cập Nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+</body>
+</html>
