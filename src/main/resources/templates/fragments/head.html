@@ -43,6 +43,6 @@
     <link rel="stylesheet" th:href="@{/css/fa6.min.css}">
 
     <!-- Custom overrides -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v=${#dates.format(#dates.createNow(),'yyyyMMddHHmmss')})}">
 </head>
 </html>

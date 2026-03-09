@@ -3,164 +3,107 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Thêm Danh Mục</title>
+    <title>Th&#234;m Danh M&#7909;c</title>
 </head>
 <body>
 <section layout:fragment="content">
+    <div class="admin-page-wrap">
+        <div id="category-app">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="fa-solid fa-folder-tree"></i>
+                    TH&#202;M DANH M&#7908;C M&#7898;I
+                </div>
+                <div class="card-body-custom">
+                    <form th:action="@{/categories/add}" th:object="${category}" method="post">
 
-<style>
-.icon-dropdown {
-    position: relative;
-    width: 260px;
-}
-.icon-selected {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px 10px;
-    cursor: pointer;
-    background: #fff;
-}
-.icon-selected .ic {
-    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome;
-    font-weight: 900;
-    font-style: normal;
-    font-size: 18px;
-    -webkit-font-smoothing: antialiased;
-    display: inline-block;
-}
-.icon-selected .chevron {
-    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome;
-    font-weight: 900;
-    font-style: normal;
-    font-size: 12px;
-    -webkit-font-smoothing: antialiased;
-    display: inline-block;
-}
-.icon-item .ic {
-    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome;
-    font-weight: 900;
-    font-style: normal;
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    display: inline-block;
-}
-.icon-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 260px;
-    padding: 10px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    display: none;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
-    z-index: 1000;
-}
-.icon-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    border-radius: 6px;
-}
-.icon-item:hover {
-    background: #f2f2f2;
-}
-.icon-item span {
-    pointer-events: none;
-}
-</style>
-
-<div class="main-container admin-page">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="form-card">
-                <h3 class="section-title">Thêm Danh Mục Mới</h3>
-                <form th:action="@{/categories/add}" th:object="${category}" method="post">
-
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Tên Danh Mục:</label>
-                        <input type="text" id="name" th:field="*{name}" class="form-control"
-                               placeholder="Nhập tên danh mục (VD: Laptop, Tablet...)" required/>
-                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-                    </div>
-
-                    <div class="icon-dropdown">
-                        <label class="form-label">Icon danh mục:</label>
-                        <input type="hidden" id="icon" th:field="*{icon}" />
-
-                        <div class="icon-selected" id="iconSelected" onclick="toggleIconDropdown()">
-                            <span class="ic fa-solid fa-tag" id="selectedIcon"></span>
-                            <span id="selectedLabel">Chọn icon</span>
-                            <span class="chevron fa-solid fa-chevron-down"></span>
+                        <div class="form-group">
+                            <label class="form-label">T&#234;n danh m&#7909;c</label>
+                            <input type="text"
+                                   th:field="*{name}"
+                                   class="form-control-custom"
+                                   placeholder="V&#237; d&#7909;: &#272;i&#7879;n tho&#7841;i, Laptop..."
+                                   required />
                         </div>
 
-                        <div class="icon-list" id="iconList">
-                            <div class="icon-item" data-icon="fa-solid fa-mobile-screen" onclick="selectIcon(this)"><span class="ic fa-solid fa-mobile-screen"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-laptop" onclick="selectIcon(this)"><span class="ic fa-solid fa-laptop"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-tablet" onclick="selectIcon(this)"><span class="ic fa-solid fa-tablet"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-headphones" onclick="selectIcon(this)"><span class="ic fa-solid fa-headphones"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-clock" onclick="selectIcon(this)"><span class="ic fa-solid fa-clock"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-camera" onclick="selectIcon(this)"><span class="ic fa-solid fa-camera"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-gamepad" onclick="selectIcon(this)"><span class="ic fa-solid fa-gamepad"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-tv" onclick="selectIcon(this)"><span class="ic fa-solid fa-tv"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-battery-full" onclick="selectIcon(this)"><span class="ic fa-solid fa-battery-full"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-microchip" onclick="selectIcon(this)"><span class="ic fa-solid fa-microchip"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-sim-card" onclick="selectIcon(this)"><span class="ic fa-solid fa-sim-card"></span></div>
-                            <div class="icon-item" data-icon="fa-solid fa-keyboard" onclick="selectIcon(this)"><span class="ic fa-solid fa-keyboard"></span></div>
+                        <div class="form-group">
+                            <label class="form-label">Danh m&#7909;c cha</label>
+                            <select th:field="*{parent}" class="form-select-custom">
+                                <option value="">-- Kh&#244;ng c&#243; (Danh m&#7909;c g&#7889;c) --</option>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.name}">
+                                </option>
+                            </select>
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="parent" class="form-label">Danh Mục Cha (Tùy chọn):</label>
-                        <select id="parent" th:field="*{parent}" class="form-select">
-                            <option value="">-- Không có (Đây là danh mục chính) --</option>
-                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label class="form-label">Ch&#7885;n Icon &#273;&#7841;i di&#7879;n</label>
+                            <input type="hidden" th:field="*{icon}" id="iconInput"/>
+                            <div class="icon-grid">
+                                <div class="icon-option" data-icon="fa-solid fa-mobile-screen-button"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-laptop"><i class="fa-solid fa-laptop"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-tablet"><i class="fa-solid fa-tablet"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-desktop"><i class="fa-solid fa-desktop"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-tv"><i class="fa-solid fa-tv"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-headphones"><i class="fa-solid fa-headphones"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-camera"><i class="fa-solid fa-camera"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-gamepad"><i class="fa-solid fa-gamepad"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-keyboard"><i class="fa-solid fa-keyboard"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-mouse"><i class="fa-solid fa-mouse"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-microchip"><i class="fa-solid fa-microchip"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-wifi"><i class="fa-solid fa-wifi"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-battery-full"><i class="fa-solid fa-battery-full"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-bolt"><i class="fa-solid fa-bolt"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-plug"><i class="fa-solid fa-plug"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-print"><i class="fa-solid fa-print"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-cart-shopping"><i class="fa-solid fa-cart-shopping"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-tag"><i class="fa-solid fa-tag"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-star"><i class="fa-solid fa-star"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-heart"><i class="fa-solid fa-heart"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-fire"><i class="fa-solid fa-fire"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-gift"><i class="fa-solid fa-gift"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-box"><i class="fa-solid fa-box"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-truck"><i class="fa-solid fa-truck"></i></div>
+                            </div>
+                        </div>
 
-                    <div class="text-end mt-4">
-                        <a th:href="@{/categories}" class="btn btn-secondary me-2">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary fw-bold px-4">Lưu Danh Mục</button>
-                    </div>
-                </form>
+                        <div class="action-group">
+                            <button type="submit" class="btn-save">
+                                <i class="fa-solid fa-check-circle"></i>
+                                L&#431;U D&#7918; LI&#7878;U
+                            </button>
+                            <a th:href="@{/categories}" class="btn-back">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                Quay l&#7841;i
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-function toggleIconDropdown() {
-    const list = document.getElementById('iconList');
-    list.style.display = (list.style.display === 'grid') ? 'none' : 'grid';
-}
-function selectIcon(element) {
-    const iconClass = element.getAttribute('data-icon');
-    document.getElementById('selectedIcon').className = 'ic ' + iconClass;
-    document.getElementById('icon').value = iconClass;
-    document.getElementById('iconList').style.display = 'none';
-}
-document.addEventListener('click', function(e) {
-    const dropdown = document.querySelector('.icon-dropdown');
-    if (dropdown && !dropdown.contains(e.target)) {
-        document.getElementById('iconList').style.display = 'none';
-    }
-});
-window.addEventListener('DOMContentLoaded', function() {
-    const cur = document.getElementById('icon').value;
-    if (cur) {
-        document.getElementById('selectedIcon').className = 'ic ' + cur;
-    }
-});
-</script>
+    <script>
+        function bindCategoryIcons() {
+            var icons = document.querySelectorAll('#category-app .icon-option');
+            var iconInput = document.getElementById('iconInput');
+            if (!iconInput) return;
+            icons.forEach(function(icon) {
+                icon.addEventListener('click', function() {
+                    icons.forEach(function(i) { i.classList.remove('selected'); });
+                    this.classList.add('selected');
+                    iconInput.value = this.dataset.icon;
+                });
+            });
+            var current = iconInput.value;
+            if (current) {
+                var sel = Array.from(icons).find(function(i) { return i.dataset.icon === current; });
+                if (sel) sel.classList.add('selected');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', bindCategoryIcons);
+    </script>
 </section>
 </body>
 </html>

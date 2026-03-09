@@ -1,4 +1,4 @@
-package com.hutech.demo.controller;
+﻿package com.hutech.demo.controller;
 
 import com.hutech.demo.model.Category;
 import com.hutech.demo.service.CategoryService;
@@ -67,10 +67,11 @@ public class CategoryController {
     public String deleteCategory(@PathVariable("id") Long id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         try {
             categoryService.deleteCategoryById(id);
-            redirectAttributes.addFlashAttribute("success", "Đã xóa danh mục thành công!");
+            redirectAttributes.addFlashAttribute("success", "Da xoa danh muc thanh cong.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Không thể xóa danh mục này. Có thể nó đang chứa sản phẩm hoặc danh mục con.");
+            redirectAttributes.addFlashAttribute("error", "Khong the xoa danh muc. Vui long thu lai.");
         }
         return "redirect:/categories";
     }
 }
+

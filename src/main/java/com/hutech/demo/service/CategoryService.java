@@ -1,11 +1,14 @@
 package com.hutech.demo.service;
 
 import com.hutech.demo.model.Category;
+import com.hutech.demo.model.Product;
 import com.hutech.demo.repository.CategoryRepository;
+import com.hutech.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,7 @@ import java.util.Optional;
 @Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
@@ -37,9 +41,34 @@ public class CategoryService {
     }
 
     public void deleteCategoryById(Long id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new IllegalStateException("Category with ID " + id + " does not exist.");
+        Category target = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Category with ID " + id + " does not exist."));
+
+        Category parent = target.getParent();
+
+        // Move products to parent category (or null if deleting a root category).
+        List<Product> products = productRepository.findByCategoryId(id);
+        for (Product product : products) {
+            product.setCategory(parent);
         }
-        categoryRepository.deleteById(id);
+        if (!products.isEmpty()) {
+            productRepository.saveAll(products);
+        }
+
+        // Re-parent direct children so they are not deleted with this category.
+        List<Category> children = categoryRepository.findByParent(target);
+        for (Category child : children) {
+            child.setParent(parent);
+        }
+        if (!children.isEmpty()) {
+            categoryRepository.saveAll(children);
+        }
+
+        // Clear inverse side to avoid stale cascade state before delete.
+        target.setChildren(new ArrayList<>());
+        categoryRepository.save(target);
+
+        categoryRepository.delete(target);
+        categoryRepository.flush();
     }
 }

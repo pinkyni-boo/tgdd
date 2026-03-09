@@ -3,71 +3,57 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Trang Quản Trị - Admin Dashboard</title>
+    <title>Trang Qu&#7843;n Tr&#7883; - Admin Dashboard</title>
 </head>
 <body>
 <section layout:fragment="content">
-<div class="main-container admin-page">
-    
-    <div class="mb-4">
-        <h2 class="fw-bold text-uppercase border-start border-5 border-warning ps-3">Trang Chủ Quản Trị</h2>
-        <p class="text-muted ps-4">Chào mừng Admin! Bạn muốn quản lý gì hôm nay?</p>
-    </div>
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-hero">
+                <h2 class="admin-title admin-title--xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Trang Ch&#7911; Qu&#7843;n Tr&#7883;
+                </h2>
+                <p class="admin-subtitle">Ch&#224;o m&#7915;ng Admin! B&#7841;n mu&#7889;n qu&#7843;n l&#253; g&#236; h&#244;m nay?</p>
+            </div>
 
-    <!-- Dashboard Tiles -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        
-        <!-- Product Management -->
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0 hover-shadow">
-                <div class="card-body text-center py-5">
-                    <div class="mb-3 text-warning">
-                        <i class="fa-solid fa-mobile-screen-button fa-4x"></i>
+            <div class="admin-quick-grid">
+                <a th:href="@{/products}" class="admin-quick-card admin-quick-card--product">
+                    <div class="admin-quick-icon">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
                     </div>
-                    <h4 class="card-title fw-bold">Sản Phẩm</h4>
-                    <p class="card-text text-muted">Quản lý danh sách điện thoại, laptop...</p>
-                    <a href="/products" class="btn btn-warning w-75 fw-bold">Quản Lý </a>
-                </div>
+                    <h3 class="admin-quick-title">S&#7843;n Ph&#7849;m</h3>
+                    <p class="admin-quick-desc">Qu&#7843;n l&#253; danh s&#225;ch &#273;i&#7879;n tho&#7841;i, laptop v&#224; ph&#7909; ki&#7879;n.</p>
+                    <span class="admin-quick-link">Qu&#7843;n L&#253;</span>
+                </a>
+
+                <a th:href="@{/categories}" class="admin-quick-card admin-quick-card--category">
+                    <div class="admin-quick-icon">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h3 class="admin-quick-title">Danh M&#7909;c</h3>
+                    <p class="admin-quick-desc">T&#7893; ch&#7913;c danh m&#7909;c cha - con cho c&#7917;a h&#224;ng.</p>
+                    <span class="admin-quick-link">Qu&#7843;n L&#253;</span>
+                </a>
+
+                <a th:href="@{/orders}" class="admin-quick-card admin-quick-card--order">
+                    <div class="admin-quick-icon">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </div>
+                    <h3 class="admin-quick-title">&#272;&#417;n H&#224;ng</h3>
+                    <p class="admin-quick-desc">Theo d&#245;i tr&#7841;ng th&#225;i v&#224; x&#7917; l&#253; &#273;&#417;n &#273;&#7863;t h&#224;ng.</p>
+                    <span class="admin-quick-link">Xem Danh S&#225;ch</span>
+                </a>
+            </div>
+
+            <div class="admin-back-home">
+                <a th:href="@{/}" class="admin-btn admin-btn--muted">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    V&#7873; Trang Web B&#225;n H&#224;ng
+                </a>
             </div>
         </div>
-
-        <!-- Category Management -->
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0 hover-shadow">
-                <div class="card-body text-center py-5">
-                    <div class="mb-3 text-primary">
-                        <i class="fa-solid fa-layer-group fa-4x"></i>
-                    </div>
-                    <h4 class="card-title fw-bold">Danh Mục</h4>
-                    <p class="card-text text-muted">Quản lý các loại sản phẩm...</p>
-                    <a href="/categories" class="btn btn-primary w-75 fw-bold text-white">Quản Lý </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Order Management (Active) -->
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0 hover-shadow">
-                <div class="card-body text-center py-5">
-                    <div class="mb-3 text-success">
-                        <i class="fa-solid fa-cart-shopping fa-4x"></i>
-                    </div>
-                    <h4 class="card-title fw-bold">Đơn Hàng</h4>
-                    <p class="card-text text-muted">Xem và xử lý đơn đặt hàng...</p>
-                    <a href="/orders" class="btn btn-success w-75 fw-bold">Xem Đơn Hàng</a>
-                </div>
-            </div>
-        </div>
-        
     </div>
-    
-    <div class="mt-5 text-end">
-        <a href="/" class="btn btn-outline-secondary">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Về Trang Web Bán Hàng
-        </a>
-    </div>
-
-</div>
 </section>
 </body>
 </html>

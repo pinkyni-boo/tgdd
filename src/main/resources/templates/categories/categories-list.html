@@ -3,79 +3,118 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Quản Lý Danh Mục</title>
+    <title>Qu&#7843;n L&#253; Danh M&#7909;c</title>
 </head>
 <body>
 <section layout:fragment="content">
-<div class="main-container admin-page">
-    
-    <!-- Admin Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
-        <div>
-             <h3 class="mb-0 text-uppercase fw-bold"><i class="fa-solid fa-layer-group text-primary"></i> Quản Lý Danh Mục</h3>
-             <small class="text-muted">Trang dành cho Admin</small>
-        </div>
-        <div>
-            <a th:href="@{/admin}" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Trang Chủ Quản Lý</a>
-            <a th:href="@{/products}" class="btn btn-outline-primary fw-bold me-2"><i class="fa-solid fa-list-check"></i> Quản Lý Sản Phẩm</a>
-            <a th:href="@{/categories/add}" class="btn btn-warning fw-bold"><i class="fa-solid fa-plus-circle"></i> Thêm Danh Mục</a>
-        </div>
-    </div>
-
-    <!-- Alerts -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fa-solid fa-check-circle"></i> <span th:text="${success}">The details were saved successfully.</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}">The details were not saved.</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <!-- Category Table -->
-    <div class="bg-white rounded shadow-sm p-3">
-        <table class="table table-hover align-middle">
-            <thead class="bg-light">
-            <tr>
-                <th scope="col" style="width: 8%;">ID</th>
-                <th scope="col">Tên Danh Mục</th>
-                <th scope="col" style="width: 15%;">Icon</th>
-                <th scope="col" style="width: 20%;">Danh Mục Cha</th>
-                <th scope="col" style="width: 20%;">Hành động</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="category : ${categories}">
-                <td th:text="${category.id}" class="fw-bold text-secondary">1</td>
-                <td class="fw-bold">
-                    <i th:if="${category.icon}" th:class="${category.icon}" class="me-1"></i>
-                    <span th:text="${category.name}">Electronics</span>
-                </td>
-                <td class="text-muted small" th:text="${category.icon != null ? category.icon : '—'}">—</td>
-                <td>
-                    <span th:if="${category.parent != null}" class="badge bg-info text-dark" th:text="${category.parent.name}">Parent</span>
-                    <span th:if="${category.parent == null}" class="badge bg-success">Danh mục gốc</span>
-                </td>
-                <td>
-                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-sm btn-primary me-1" title="Sửa">
-                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-toolbar">
+                <div class="admin-title-block">
+                    <h3 class="admin-title">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Qu&#7843;n L&#253; Danh M&#7909;c
+                    </h3>
+                    <p class="admin-subtitle">Trang d&#224;nh cho Admin</p>
+                </div>
+                <div class="admin-actions">
+                    <a th:href="@{/admin}" class="admin-btn admin-btn--muted">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Trang Ch&#7911; Qu&#7843;n L&#253;
                     </a>
-                    <a th:href="@{/categories/delete/{id}(id=${category.id})}"
-                       class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
-                        <i class="fa-solid fa-trash"></i> Xóa
+                    <a th:href="@{/products}" class="admin-btn admin-btn--outline">
+                        <i class="fa-solid fa-list-check"></i>
+                        Qu&#7843;n L&#253; S&#7843;n Ph&#7849;m
                     </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    
-    <div th:if="${categories.empty}" class="text-center py-5">
-        <p class="text-muted">Chưa có danh mục nào.</p>
-        <a th:href="@{/categories/add}" class="btn btn-warning">Thêm danh mục ngay</a>
-    </div>
+                    <a th:href="@{/categories/add}" class="admin-btn admin-btn--accent">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        Th&#234;m Danh M&#7909;c
+                    </a>
+                </div>
+            </div>
 
-</div>
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show admin-alert" role="alert">
+                <i class="fa-solid fa-check-circle"></i>
+                <span th:text="${success}">The details were saved successfully.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show admin-alert" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span th:text="${error}">The details were not saved.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="admin-stat-row">
+                <div class="admin-stat-chip">
+                    <i class="fa-solid fa-sitemap"></i>
+                    T&#7893;ng danh m&#7909;c:
+                    <strong th:text="${#lists.size(categories)}">0</strong>
+                </div>
+                <div class="admin-stat-chip admin-stat-chip--warn">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    C&#7845;u tr&#250;c danh m&#7909;c
+                </div>
+            </div>
+
+            <div class="admin-table-card">
+                <div class="table-responsive">
+                    <table class="table admin-table align-middle">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="width: 8%;">ID</th>
+                            <th scope="col">T&#234;n Danh M&#7909;c</th>
+                            <th scope="col" style="width: 22%;">Icon</th>
+                            <th scope="col" style="width: 22%;">Danh M&#7909;c Cha</th>
+                            <th scope="col" style="width: 24%;">H&#224;nh &#273;&#7897;ng</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category : ${categories}">
+                            <td th:text="${category.id}" class="admin-id">1</td>
+                            <td class="admin-product-name">
+                                <i th:if="${category.icon != null and #strings.contains(category.icon, 'fa-')}" th:class="${category.icon}"></i>
+                                <span th:text="${category.name}">Electronics</span>
+                            </td>
+                            <td>
+                                <div class="admin-icon-cell" th:if="${category.icon != null and !category.icon.isEmpty()}">
+                                    <span class="admin-icon-preview">
+                                        <i th:if="${#strings.contains(category.icon, 'fa-')}" th:class="${category.icon}"></i>
+                                        <i th:unless="${#strings.contains(category.icon, 'fa-')}" class="fa-solid fa-tag"></i>
+                                    </span>
+                                </div>
+                                <span class="admin-icon-code" th:if="${category.icon == null or category.icon.isEmpty()}">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${category.parent != null}" class="admin-tag" th:text="${category.parent.name}">Parent</span>
+                                <span th:if="${category.parent == null}" class="admin-tag admin-tag--success">Danh m&#7909;c g&#7889;c</span>
+                            </td>
+                            <td>
+                                <div class="admin-row-actions">
+                                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="admin-row-btn admin-row-btn--edit" title="S&#7917;a">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        S&#7917;a
+                                    </a>
+                                    <a th:href="@{/categories/delete/{id}(id=${category.id})}"
+                                       class="admin-row-btn admin-row-btn--delete"
+                                       title="X&#243;a"
+                                       onclick="return confirm('B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a danh m&#7909;c n&#224;y?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                        X&#243;a
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${categories.empty}" class="admin-empty">
+                <p>Ch&#432;a c&#243; danh m&#7909;c n&#224;o.</p>
+                <a th:href="@{/categories/add}" class="admin-btn admin-btn--accent">Th&#234;m danh m&#7909;c ngay</a>
+            </div>
+        </div>
+    </div>
 </section>
 </body>
 </html>

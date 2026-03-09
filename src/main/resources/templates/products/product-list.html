@@ -3,97 +3,118 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title th:text="${title} ?: 'Product'">Product</title>
+    <title>Qu&#7843;n L&#253; S&#7843;n Ph&#7849;m</title>
 </head>
 <body>
-
-<div layout:fragment="banner">
-    <div class="container mt-3">
-         <div class="banner-placeholder">
-             <!-- Used CSS background image, or could be empty div with color -->
-         </div>
-    </div>
-</div>
-
 <section layout:fragment="content">
-<div class="main-container admin-page">
-    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
-        <div>
-             <h3 class="mb-0 text-uppercase fw-bold"><i class="fa-solid fa-box-open text-primary"></i> Quản Lý Sản Phẩm</h3>
-             <small class="text-muted">Trang dành cho Admin</small>
-        </div>
-        <div>
-            <a th:href="@{/admin}" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Trang Chủ Quản Lý</a>
-            <a th:href="@{/categories}" class="btn btn-outline-primary fw-bold me-2"><i class="fa-solid fa-layer-group"></i> Quản Lý Danh Mục</a>
-            <a th:href="@{/products/add}" class="btn btn-warning fw-bold"><i class="fa-solid fa-plus-circle"></i> Thêm Sản Phẩm</a>
-        </div>
-    </div>
-    
-    <!-- Alerts -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fa-solid fa-check-circle"></i> <span th:text="${success}">Success message</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}">Error message</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-toolbar">
+                <div class="admin-title-block">
+                    <h3 class="admin-title">
+                        <i class="fa-solid fa-box-open"></i>
+                        Qu&#7843;n L&#253; S&#7843;n Ph&#7849;m
+                    </h3>
+                    <p class="admin-subtitle">Trang d&#224;nh cho Admin</p>
+                </div>
+                <div class="admin-actions">
+                    <a th:href="@{/admin}" class="admin-btn admin-btn--muted">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Trang Ch&#7911; Qu&#7843;n L&#253;
+                    </a>
+                    <a th:href="@{/categories}" class="admin-btn admin-btn--outline">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Qu&#7843;n L&#253; Danh M&#7909;c
+                    </a>
+                    <a th:href="@{/products/add}" class="admin-btn admin-btn--accent">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        Th&#234;m S&#7843;n Ph&#7849;m
+                    </a>
+                </div>
+            </div>
 
-    <!-- Countdown Timer Placeholder (Visual Only) -->
-    <div class="d-flex align-items-center mb-3">
-        <span class="badge bg-warning text-dark fs-6 me-2">Chỉ còn: 00 : 29 : 57</span>
-    </div>
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show admin-alert" role="alert">
+                <i class="fa-solid fa-check-circle"></i>
+                <span th:text="${success}">The details were saved successfully.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show admin-alert" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span th:text="${error}">The details were not saved.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
-    <!-- Admin Table View -->
-    <div class="bg-white rounded shadow-sm p-3">
-        <table class="table table-hover align-middle">
-            <thead class="bg-light">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col" style="width: 80px;">Ảnh</th>
-                    <th scope="col">Tên sản phẩm</th>
-                    <th scope="col">Giá</th>
-                    <th scope="col">Danh mục</th>
-                    <th scope="col">Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="product : ${products}">
-                    <td th:text="${product.id}">1</td>
-                    <td>
-                        <img th:if="${product.image != null and product.image != ''}"
-                             th:src="${product.image.startsWith('http') ? product.image : '/product-images/' + product.image}"
-                             class="rounded border" width="60" height="60" style="object-fit: cover;">
-                         <div th:unless="${product.image != null and product.image != ''}" 
-                              class="rounded border bg-light d-flex align-items-center justify-content-center" 
-                              style="width: 60px; height: 60px;">
-                             <i class="fa-regular fa-image text-muted"></i>
-                         </div>
-                    </td>
-                    <td class="fw-bold" th:text="${product.name}">Iphone 15</td>
-                    <td class="text-danger fw-bold" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">20.000.000₫</td>
-                    <td>
-                        <span class="badge bg-info text-dark" th:if="${product.category != null}" th:text="${product.category.name}">Phone</span>
-                        <span class="badge bg-secondary" th:unless="${product.category != null}">Chưa phân loại</span>
-                    </td>
-                    <td>
-                        <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-primary me-1" title="Sửa">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                        <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <div class="admin-stat-row">
+                <div class="admin-stat-chip">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    T&#7893;ng s&#7843;n ph&#7849;m:
+                    <strong th:text="${#lists.size(products)}">0</strong>
+                </div>
+                <div class="admin-stat-chip admin-stat-chip--warn">
+                    <i class="fa-solid fa-bolt"></i>
+                    Khu v&#7921;c qu&#7843;n tr&#7883;
+                </div>
+            </div>
+
+            <div class="admin-table-card">
+                <div class="table-responsive">
+                    <table class="table admin-table align-middle">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" style="width: 96px;">&#7842;nh</th>
+                            <th scope="col">T&#234;n s&#7843;n ph&#7849;m</th>
+                            <th scope="col">Gi&#225;</th>
+                            <th scope="col">Danh m&#7909;c</th>
+                            <th scope="col">H&#224;nh &#273;&#7897;ng</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${products}">
+                            <td th:text="${product.id}" class="admin-id">1</td>
+                            <td>
+                                <img th:if="${product.image != null and product.image != ''}"
+                                     th:src="${product.image.startsWith('http') ? product.image : '/product-images/' + product.image}"
+                                     alt="Product Image"
+                                     class="admin-thumb" />
+                                <div th:unless="${product.image != null and product.image != ''}"
+                                     class="admin-thumb admin-thumb--empty">
+                                    <i class="fa-regular fa-image"></i>
+                                </div>
+                            </td>
+                            <td class="admin-product-name" th:text="${product.name}">Iphone 15</td>
+                            <td class="admin-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">20,000,000 VND</td>
+                            <td>
+                                <span class="admin-tag" th:if="${product.category != null}" th:text="${product.category.name}">Phone</span>
+                                <span class="admin-tag admin-tag--muted" th:unless="${product.category != null}">Ch&#432;a ph&#226;n lo&#7841;i</span>
+                            </td>
+                            <td>
+                                <div class="admin-row-actions">
+                                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="admin-row-btn admin-row-btn--edit" title="S&#7917;a">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        S&#7917;a
+                                    </a>
+                                    <a th:href="@{/products/delete/{id}(id=${product.id})}"
+                                       class="admin-row-btn admin-row-btn--delete"
+                                       title="X&#243;a"
+                                       onclick="return confirm('B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                        X&#243;a
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${products.empty}" class="admin-empty">
+                <p>Ch&#432;a c&#243; s&#7843;n ph&#7849;m n&#224;o.</p>
+                <a th:href="@{/products/add}" class="admin-btn admin-btn--accent">Th&#234;m s&#7843;n ph&#7849;m ngay</a>
+            </div>
+        </div>
     </div>
-    
-    <div th:if="${products.empty}" class="text-center py-5">
-        <p class="text-muted">Chưa có sản phẩm nào.</p>
-        <a th:href="@{/products/add}" class="btn btn-warning">Thêm sản phẩm ngay</a>
-    </div>
-</div>
 </section>
 </body>
 </html>
