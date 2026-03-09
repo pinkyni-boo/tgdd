@@ -3,277 +3,261 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Giỏ hàng - Thegioididong.com</title>
+    <title>Checkout</title>
 </head>
 <body>
 <section layout:fragment="content">
 <div class="tgdd-cart-page">
-    <form th:action="@{/order/submit}" method="post" id="checkoutForm">
+    <div style="max-width:780px;margin:12px auto 0;" th:if="${error}">
+        <div class="alert alert-danger mb-2" th:text="${error}">Error</div>
+    </div>
+    <div style="max-width:780px;margin:12px auto 0;" th:if="${message}">
+        <div class="alert alert-success mb-2" th:text="${message}">Message</div>
+    </div>
 
-    <div class="cart-body">
-        <!-- Delivery toggle -->
-        <div class="choosedelivery-top">
-            <input type="hidden" value="2">
-            <span class="option-first active" onclick="this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');var s=this.parentElement.querySelector('.option-second');s.classList.remove('active');s.querySelector('.cart-radio-item').classList.remove('active');">
-                <span class="cart-radio-item active"></span> Giao tận nơi
-            </span>
-            <span class="option-second" onclick="this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');var s=this.parentElement.querySelector('.option-first');s.classList.remove('active');s.querySelector('.cart-radio-item').classList.remove('active');">
-                <span class="cart-radio-item"></span> Nhận tại siêu thị
-            </span>
-        </div>
+    <div class="cart-body" th:if="${#lists.isEmpty(cartItems)}" style="max-width:780px;margin:16px auto;padding:24px;">
+        <h4>Gio hang trong</h4>
+        <a href="/cart" class="btn btn-primary mt-2">Quay lai gio hang</a>
+    </div>
 
-        <div class="middleCart">
-            <!-- Location / Customer info -->
-            <div class="cart-fragment">
-                <div class="info__cart location">
-                    <div class="title-content">
-                        <div class="location-row">
-                            <span class="iconcart-label-location"></span>
-                            <div class="location-input-wrap">
-                                <input type="text" name="customerName" class="cart-input-field" placeholder="Nhập họ tên người nhận" required>
+    <form th:if="${!#lists.isEmpty(cartItems)}" th:action="@{/order/submit}" method="post" id="checkoutForm">
+        <div class="cart-body">
+            <div class="middleCart">
+
+                <div class="cart-fragment">
+                    <div class="info__cart location">
+                        <div class="title-content">
+                            <div class="location-row">
+                                <span class="iconcart-label-location"></span>
+                                <div class="location-input-wrap">
+                                    <input type="text" name="customerName" class="cart-input-field" placeholder="Nhap ho ten" required>
+                                </div>
                             </div>
-                        </div>
-                        <div class="location-row">
-                            <span class="iconcart-label-phone"></span>
-                            <div class="location-input-wrap">
-                                <input type="tel" name="phone" class="cart-input-field" placeholder="Nhập số điện thoại" required>
+                            <div class="location-row">
+                                <span class="iconcart-label-phone"></span>
+                                <div class="location-input-wrap">
+                                    <input type="tel" name="phone" class="cart-input-field" placeholder="Nhap so dien thoai" required>
+                                </div>
                             </div>
-                        </div>
-                        <div class="location-row">
-                            <span class="iconcart-label-address"></span>
-                            <div class="location-input-wrap">
-                                <input type="text" name="address" class="cart-input-field" placeholder="Nhập địa chỉ nhận hàng">
+                            <div class="location-row">
+                                <span class="iconcart-label-address"></span>
+                                <div class="location-input-wrap">
+                                    <input type="text" name="address" class="cart-input-field" placeholder="Nhap dia chi giao hang" required>
+                                </div>
                             </div>
+
                         </div>
                     </div>
-                    <div class="delivery_arrow"></div>
                 </div>
-            </div>
 
-            <!-- Product list -->
-            <div class="product-list">
-                <div th:each="item : ${cartItems}" class="product-item">
-                    <div class="product-item-info">
-                        <div class="classImg">
-                            <a th:href="@{'/products/' + ${item.product.id}}" class="product-item__image">
-                                <img th:src="${item.product.image.startsWith('http') ? item.product.image : '/product-images/' + item.product.image}"
-                                     th:alt="${item.product.name}"
-                                     class="product-item__image-img" loading="lazy">
-                            </a>
-                        </div>
-                        <div class="product-item__right class-item">
-                            <div class="product-item__right-info">
-                                <a th:href="@{'/products/' + ${item.product.id}}" class="product-item__name"
-                                   th:text="${item.product.name}">Tên sản phẩm</a>
-                                <div class="product-item__right-info__price">
-                                    <div class="price-original" th:text="${#numbers.formatDecimal(item.product.price, 0, 'POINT', 0, 'COMMA')} + 'đ'">15.490.000đ</div>
-                                    <div class="price-discount" th:if="${item.product.discount gt 0}"
-                                         th:text="${#numbers.formatDecimal(item.product.price * 100 / (100 - item.product.discount), 0, 'POINT', 0, 'COMMA')} + 'đ'">15.790.000đ</div>
-                                </div>
+                <div class="product-list">
+                    <div th:each="item : ${cartItems}" class="product-item">
+                        <div class="product-item-info">
+                            <div class="classImg">
+                                <a th:href="@{'/products/' + ${item.product.id}}" class="product-item__image">
+                                    <img th:src="${item.product.image != null and !item.product.image.isEmpty() ? (item.product.image.startsWith('http') ? item.product.image : '/product-images/' + item.product.image) : 'https://placehold.co/80x80/png?text=SP'}"
+                                         th:alt="${item.product.name}"
+                                         class="product-item__image-img" loading="lazy"
+                                         onerror="this.src='https://placehold.co/80x80/png?text=SP'">
+                                </a>
                             </div>
-                            <div class="product-item__right-info-other">
-                                <p class="product-color__title" th:if="${item.product.category != null}">
-                                    <span th:text="${item.product.category.name}">Danh mục</span>
-                                </p>
-                                <div class="block product-promotion">
-                                    <aside class="area-select-promotion">
-                                        <label class="promo-select-label">Chọn 1 trong 2 khuyến mãi</label>
-                                        <div class="promo-option">
-                                            <span class="promo-option-item">
-                                                <i class="cart-radio-item"></i>
-                                                <p>Giảm giá khi mua online</p>
-                                            </span>
-                                        </div>
-                                        <div class="promo-option">
-                                            <span class="promo-option-item">
-                                                <i class="cart-radio-item"></i>
-                                                <p>Trả góp 0% qua thẻ tín dụng</p>
-                                            </span>
-                                        </div>
-                                    </aside>
-                                    <label class="promo-more-link">6 Khuyến mãi <i class="iconcart-arrow-up"></i></label>
+                            <div class="product-item__right class-item">
+                                <div class="product-item__right-info">
+                                    <a th:href="@{'/products/' + ${item.product.id}}" class="product-item__name"
+                                       th:text="${item.product.name}">Product name</a>
+                                    <div class="product-item__right-info__price">
+                                        <div class="price-original"
+                                             th:text="${#numbers.formatDecimal(item.product.price, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="quantity-box">
-                                <div class="product-quantity">
-                                    <a href="javascript:;" class="product-quantity__remove"
-                                       th:data-product-id="${item.product.id}"
-                                       onclick="ajaxRemove(this.dataset.productId, this.closest('.product-item'))">Xoá</a>
-                                    <div class="product-quantity__btn">
-                                        <button type="button" class="product-quantity__btn-minus"
-                                                th:data-product-id="${item.product.id}"
-                                                th:data-price="${item.product.price}"
-                                                th:disabled="${item.quantity le 1}"
-                                                onclick="ajaxUpdateQty(this, -1)">
-                                            <i class="product-quantity__btn-minus-icon"></i>
-                                        </button>
-                                        <input type="text" class="qty-input no-spinners" readonly th:value="${item.quantity}">
-                                        <button type="button" class="product-quantity__btn-plus"
-                                                th:data-product-id="${item.product.id}"
-                                                th:data-price="${item.product.price}"
-                                                onclick="ajaxUpdateQty(this, 1)">
-                                            <i class="product-quantity__btn-plus-i-t"></i>
-                                            <i class="product-quantity__btn-plus-i-l"></i>
-                                        </button>
+                                <div class="quantity-box">
+                                    <div class="product-quantity">
+                                        <a href="javascript:;" class="product-quantity__remove"
+                                           th:data-product-id="${item.product.id}"
+                                           onclick="ajaxRemove(this.dataset.productId, this.closest('.product-item'))">Xoa</a>
+                                        <div class="product-quantity__btn">
+                                            <button type="button" class="product-quantity__btn-minus"
+                                                    th:data-product-id="${item.product.id}"
+                                                    th:data-price="${item.product.price}"
+                                                    th:disabled="${item.quantity le 1}"
+                                                    onclick="ajaxUpdateQty(this, -1)">
+                                                <i class="product-quantity__btn-minus-icon"></i>
+                                            </button>
+                                            <input type="text" class="qty-input no-spinners" readonly th:value="${item.quantity}">
+                                            <button type="button" class="product-quantity__btn-plus"
+                                                    th:data-product-id="${item.product.id}"
+                                                    th:data-price="${item.product.price}"
+                                                    onclick="ajaxUpdateQty(this, 1)">
+                                                <i class="product-quantity__btn-plus-i-t"></i>
+                                                <i class="product-quantity__btn-plus-i-l"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Subtotal -->
-            <div class="total-provisional">
-                <span class="total-product-quantity">
-                    <span class="total-label">Tạm tính </span>(<span th:text="${cartItems.size()}">1</span> sản phẩm):
-                </span>
-                <span class="temp-total-money" th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">15.490.000đ</span>
-            </div>
-        </div>
-
-        <!-- Special requests -->
-        <div class="another-option-wrapper cart-fragment">
-            <p class="another-option-title">Yêu cầu đặc biệt</p>
-            <div class="another-option-item">
-                <label class="another-option-label" onclick="this.querySelector('.iconcart-select').classList.toggle('checked')">
-                    <i class="iconcart-select"></i>
-                    <span>Hướng dẫn sử dụng, giải đáp thắc mắc sản phẩm</span>
-                </label>
-                <div class="another-option-company">
-                    <label class="another-option-label" onclick="this.querySelector('.iconcart-select').classList.toggle('checked')">
-                        <i class="iconcart-select"></i>
-                        <span>Xuất hóa đơn công ty</span>
-                    </label>
-                </div>
-                <div class="another-option-customernote">
-                    <label class="another-option-label" onclick="this.querySelector('.iconcart-select').classList.toggle('checked')">
-                        <i class="iconcart-select"></i>
-                        <span>Yêu cầu khác</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Coupon + VIP + Total (same card) -->
-        <div class="cart-fragment">
-            <div class="promotioncodebox">
-                <div class="promo-code-row">
-                    <i class="iconcart-coupon"></i>
-                    <p>Chọn hoặc nhập mã giảm</p>
-                    <div class="arrow"></div>
+                <div class="total-provisional">
+                    <span class="total-product-quantity">
+                        <span class="total-label">Tam tinh </span>(<span id="summaryItemCount" th:text="${cartItems.size()}">1</span> san pham)
+                    </span>
+                    <span class="temp-total-money" id="subtotalDisplay"
+                          th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</span>
                 </div>
             </div>
 
-            <div class="giftvip-point">
-                <div class="giftvip-left">
-                    <div><i class="sprire-cart-qtv-tgdd"></i></div>
-                    <span>Dùng điểm Quà Tặng VIP</span>
-                    <div class="toggle-switch" id="vipToggle" onclick="toggleLoyaltyPoints(this)">
-                        <div class="toggle-track"></div>
-                        <div class="toggle-dot"></div>
+            <div class="cart-fragment">
+                <div class="promotioncodebox" style="position:relative;">
+                    <div class="promo-code-row" style="cursor:default;">
+                        <i class="iconcart-coupon"></i>
+                        <input type="text" id="voucherCodeInput" class="form-control"
+                               placeholder="Chon voucher (neu co)" autocomplete="off" readonly
+                               onclick="toggleVoucherDropdown()">
+                        <input type="hidden" name="voucherCode" id="voucherCodeHidden">
+                    </div>
+                    <div id="voucherDropdown" style="display:none; position:absolute; background:#fff; border:1px solid #ddd; border-radius:6px; z-index:999; max-height:220px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.12); min-width:340px;">
+                        <div id="voucherDropdownList"></div>
+                    </div>
+                    <div class="small text-muted mt-1" id="voucherHint" style="display:none;"></div>
+                </div>
+
+                <div class="giftvip-point">
+                    <div class="giftvip-left">
+                        <div><i class="sprire-cart-qtv-tgdd"></i></div>
+                        <span>Dung diem tich luy</span>
+                        <div class="toggle-switch" id="vipToggle" onclick="toggleLoyaltyPoints(this)">
+                            <div class="toggle-track"></div>
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="loyaltyInfo" style="display:none; margin-top:8px; font-size:13px; color:#666;">
+                        <span>Ban co <strong id="loyaltyPointsDisplay">0</strong> diem (<strong id="loyaltyMoneyDisplay">0</strong>đ)</span>
                     </div>
                 </div>
-                <div id="loyaltyInfo" style="display:none; margin-top:8px; font-size:13px; color:#666;">
-                    <span>Bạn đang có <strong id="loyaltyPointsDisplay">0</strong> điểm (<strong id="loyaltyMoneyDisplay">0</strong>đ)</span>
+                <input type="hidden" name="useLoyaltyPoints" id="useLoyaltyPointsField" value="false">
+
+                <div class="area-total">
+                    <div class="area-total__break-line"></div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Tam tinh</span>
+                        <strong id="summarySubtotal"
+                                th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Phi giao hang</span>
+                        <strong id="shippingDisplay"
+                                th:text="${#numbers.formatDecimal(shippingFee, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</strong>
+                    </div>
+                    <div id="voucherDiscountRow"
+                         style="display:none; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:14px; color:#16a34a;">
+                        <span>Giam voucher</span>
+                        <span id="voucherDiscountAmount">-0đ</span>
+                    </div>
+                    <div id="discountRow"
+                         style="display:none; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:14px; color:#28a745;">
+                        <span>Giam diem tich luy</span>
+                        <span id="discountAmount">-0đ</span>
+                    </div>
+                    <div class="total-price">
+                        <strong>Tong thanh toan</strong>
+                        <strong id="totalDisplay"
+                                th:text="${#numbers.formatDecimal(payableAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</strong>
+                    </div>
+                    <div class="accumulated-point">
+                        <span>Diem nhan duoc sau don nay</span>
+                        <span id="earnPointsDisplay"
+                              th:text="${#numbers.formatDecimal(payableAmount / 1000, 0, 'POINT', 0, 'COMMA')} + ' diem'">0 diem</span>
+                    </div>
+                    <div class="small text-muted mt-2">Free ship khi tong so luong >= 2 va tam tinh >= 1.000.000đ.</div>
                 </div>
             </div>
-            <input type="hidden" name="useLoyaltyPoints" id="useLoyaltyPointsField" value="false">
 
-            <div class="area-total">
-                <div class="area-total__break-line"></div>
-                <div id="discountRow" style="display:none; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:14px; color:#28a745;">
-                    <span>Giảm điểm tích lũy</span>
-                    <span id="discountAmount">-0đ</span>
-                </div>
-                <div class="total-price">
-                    <strong>Tổng tiền</strong>
-                    <strong id="totalDisplay" th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">15.490.000đ</strong>
-                </div>
-                <div class="accumulated-point">
-                    <span>Điểm tích lũy Quà Tặng VIP</span>
-                    <span id="earnPointsDisplay" th:text="${#numbers.formatDecimal(totalAmount / 1000, 0, 'POINT', 0, 'COMMA')} + ' điểm'">15 điểm</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment methods -->
-        <div class="payment-section">
-            <div class="payment-title">Hình thức thanh toán</div>
-            <ul class="formality-pay-new">
-                <li class="itemCheck" onclick="document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function(e){e.classList.remove('active');e.querySelector('.cart-radio-item').classList.remove('active')});this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');this.querySelector('input[type=radio]').checked=true;">
-                    <i class="cart-radio-item"></i>
-                    <input type="radio" name="payment" value="MWG_PAYLATER" style="display:none">
-                    <div class="text-payment">
-                        <span class="pay-label">
-                            <i class="choose-payment-mwg-paylater"></i>
-                            <span>Qua ví MWG Paylater</span>
-                            <a href="javascript:;" class="link-register-pay">Đăng ký ngay</a>
-                        </span>
-                        <span class="payment-promotion-text">(Hạn mức đến <b>40 triệu</b>, lãi suất 0% đến 45 ngày)</span>
-                    </div>
-                </li>
-                <li class="itemCheck" onclick="document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function(e){e.classList.remove('active');e.querySelector('.cart-radio-item').classList.remove('active')});this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');this.querySelector('input[type=radio]').checked=true;">
-                    <i class="cart-radio-item"></i>
-                    <input type="radio" name="payment" value="BANKING" style="display:none">
-                    <div class="text-payment">
-                        <span class="pay-label">
-                            <i class="choose-payment-bank"></i>
-                            <span>Chuyển khoản ngân hàng</span>
-                        </span>
-                    </div>
-                </li>
-                <li class="itemCheck active" onclick="document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function(e){e.classList.remove('active');e.querySelector('.cart-radio-item').classList.remove('active')});this.classList.add('active');this.querySelector('.cart-radio-item').classList.add('active');this.querySelector('input[type=radio]').checked=true;">
-                    <i class="cart-radio-item active"></i>
-                    <input type="radio" name="payment" value="COD" checked style="display:none">
-                    <div class="text-payment">
-                        <span class="pay-label">
-                            <i class="choose-payment-default"></i>
-                            <span>Thanh toán tiền mặt khi nhận hàng</span>
-                        </span>
-                    </div>
-                </li>
-                <div class="classShowmore">
-                    <li class="show-more-payment-method">
-                        <span>8 hình thức thanh toán khác</span>
+            <div class="payment-section">
+                <div class="payment-title">Hinh thuc thanh toan</div>
+                <ul class="formality-pay-new">
+                    <li class="itemCheck active" data-payment="COD" onclick="selectPayment(this)">
+                        <i class="cart-radio-item active"></i>
+                        <input type="radio" name="payment" value="COD" checked style="display:none">
+                        <div class="text-payment">
+                            <span class="pay-label"><i class="choose-payment-default"></i><span>Thanh toan khi nhan hang (COD)</span></span>
+                        </div>
                     </li>
+                    <li class="itemCheck" data-payment="BANKING" onclick="selectPayment(this)">
+                        <i class="cart-radio-item"></i>
+                        <input type="radio" name="payment" value="BANKING" style="display:none">
+                        <div class="text-payment">
+                            <span class="pay-label"><i class="choose-payment-bank"></i><span>Chuyen khoan ngan hang</span></span>
+                        </div>
+                    </li>
+                    <li class="itemCheck" data-payment="VNPAY" data-vnpay-method="QR" onclick="selectPayment(this)">
+                        <i class="cart-radio-item"></i>
+                        <input type="radio" name="payment" value="VNPAY" style="display:none">
+                        <div class="text-payment">
+                            <span class="pay-label"><i class="choose-payment-bank"></i><span>VNPay QR</span></span>
+                        </div>
+                    </li>
+                    <li class="itemCheck" data-payment="VNPAY" data-vnpay-method="CONNECT" onclick="selectPayment(this)">
+                        <i class="cart-radio-item"></i>
+                        <input type="radio" name="payment" value="VNPAY" style="display:none">
+                        <div class="text-payment">
+                            <span class="pay-label"><i class="choose-payment-bank"></i><span>VNPay Connect</span></span>
+                        </div>
+                    </li>
+                </ul>
+                <input type="hidden" name="vnpayMethod" id="vnpayMethodField" value="">
+                <div class="small text-muted mt-2" th:if="${!vnpayEnabled}">
+                    VNPay dang chay che do gia lap (chua cau hinh key that).
                 </div>
-            </ul>
-        </div>
+            </div>
 
-        <!-- Privacy policy -->
-        <div class="security-policy-checkbox active" onclick="this.classList.toggle('active')">
-            <i class="iconcart-select checked"></i>
-            <p class="text-security-policy">
-                Tôi đồng ý với
-                <a href="javascript:;" class="link-policy">Chính sách xử lý dữ liệu cá nhân</a>
-                của Thế Giới Di Động
-            </p>
-        </div>
-
-        <!-- Submit button -->
-        <div class="finaltotal">
-            <div class="finaltotal-inner">
-                <button type="submit" class="finaltotal--button-submit">Đặt hàng</button>
+            <div class="finaltotal">
+                <div class="finaltotal-inner">
+                    <button type="submit" class="finaltotal--button-submit">Dat hang</button>
+                </div>
             </div>
         </div>
-    </div>
-
     </form>
 </div>
 
 <script th:inline="javascript">
-    var totalAmount = /*[[${totalAmount}]]*/ 0;
+    var subtotalAmount = Number(/*[[${totalAmount}]]*/ 0);
+    var shippingFee = Number(/*[[${shippingFee}]]*/ 0);
     var customerLoyaltyPoints = 0;
     var loyaltyActive = false;
+    var voucherDiscount = 0;
+    var customerVouchers = [];
 
-    // AJAX update quantity
+    function formatMoney(v) {
+        return Number(v || 0).toLocaleString('vi-VN') + 'đ';
+    }
+
+    function selectPayment(item) {
+        document.querySelectorAll('.formality-pay-new .itemCheck').forEach(function (e) {
+            e.classList.remove('active');
+            var dot = e.querySelector('.cart-radio-item');
+            if (dot) dot.classList.remove('active');
+            var radio = e.querySelector('input[type=radio]');
+            if (radio) radio.checked = false;
+        });
+
+        item.classList.add('active');
+        var selectedDot = item.querySelector('.cart-radio-item');
+        if (selectedDot) selectedDot.classList.add('active');
+        var selectedRadio = item.querySelector('input[type=radio]');
+        if (selectedRadio) selectedRadio.checked = true;
+
+        var payType = item.dataset.payment || (selectedRadio ? selectedRadio.value : '');
+        var method = payType === 'VNPAY' ? (item.dataset.vnpayMethod || 'QR') : '';
+        document.getElementById('vnpayMethodField').value = method;
+    }
+
     function ajaxUpdateQty(btn, delta) {
         var productId = btn.dataset.productId;
-        var price = parseFloat(btn.dataset.price);
         var qtyBox = btn.closest('.product-quantity__btn');
         var qtyInput = qtyBox.querySelector('.qty-input');
-        var currentQty = parseInt(qtyInput.value);
+        var currentQty = parseInt(qtyInput.value, 10);
         var newQty = currentQty + delta;
         if (newQty < 1) return;
 
@@ -285,16 +269,12 @@
         .then(function(r) { return r.json(); })
         .then(function(data) {
             qtyInput.value = newQty;
-            // disable minus if qty is 1
             var minusBtn = qtyBox.querySelector('.product-quantity__btn-minus');
             if (minusBtn) minusBtn.disabled = (newQty <= 1);
-            totalAmount = data.totalAmount;
-            updateSubtotal(data);
-            recalcTotal();
+            applySummaryData(data);
         });
     }
 
-    // AJAX remove item
     function ajaxRemove(productId, productEl) {
         fetch('/cart/api/remove', {
             method: 'POST',
@@ -303,48 +283,137 @@
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
-            productEl.remove();
-            totalAmount = data.totalAmount;
-            updateSubtotal(data);
-            recalcTotal();
+            if (productEl) productEl.remove();
+            applySummaryData(data);
             if (data.itemCount === 0) {
                 window.location.href = '/cart';
             }
         });
     }
 
-    function updateSubtotal(data) {
-        var countEl = document.querySelector('.total-product-quantity span:nth-child(2)');
-        if (!countEl) {
-            // fallback: find the span inside total-product-quantity that has the number
-            var spans = document.querySelectorAll('.total-product-quantity span');
-            for (var i = 0; i < spans.length; i++) {
-                if (!isNaN(parseInt(spans[i].textContent))) { countEl = spans[i]; break; }
-            }
-        }
-        if (countEl) countEl.textContent = data.itemCount;
-        var tempTotal = document.querySelector('.temp-total-money');
-        if (tempTotal) tempTotal.textContent = data.totalAmount.toLocaleString('vi-VN') + 'đ';
+    function applySummaryData(data) {
+        subtotalAmount = Number(data.subtotalAmount || 0);
+        shippingFee = Number(data.shippingFee || 0);
+
+        var countEl = document.getElementById('summaryItemCount');
+        if (countEl) countEl.textContent = data.itemCount || 0;
+
+        var subtotalEl = document.getElementById('subtotalDisplay');
+        if (subtotalEl) subtotalEl.textContent = formatMoney(subtotalAmount);
+
+        recalcTotal();
     }
 
-    // Lookup loyalty points when phone field loses focus
+
+    function hydrateVoucherSelect(vouchers) {
+        var hint = document.getElementById('voucherHint');
+        customerVouchers = Array.isArray(vouchers) ? vouchers : [];
+
+        var list = document.getElementById('voucherDropdownList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        if (customerVouchers.length === 0) {
+            if (hint) { hint.textContent = 'Khong co voucher UNUSED cho SDT nay.'; hint.style.display = 'block'; }
+            voucherDiscount = 0;
+            recalcTotal();
+            return;
+        }
+
+        if (hint) { hint.style.display = 'none'; }
+
+        // blank option
+        var blankRow = document.createElement('div');
+        blankRow.style.cssText = 'padding:8px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;color:#888;';
+        blankRow.textContent = 'Khong dung voucher';
+        blankRow.addEventListener('click', function() {
+            selectVoucher('', 0);
+            document.getElementById('voucherDropdown').style.display = 'none';
+        });
+        list.appendChild(blankRow);
+
+        customerVouchers.forEach(function(v) {
+            var row = document.createElement('div');
+            row.style.cssText = 'padding:8px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:14px;';
+            var discountLabel = Number(v.discountAmount || 0).toLocaleString('vi-VN') + 'đ';
+            row.textContent = (v.code || '') + ' – ' + (v.name || 'Voucher') + ' (-' + discountLabel + ')';
+            row.addEventListener('mouseover', function() { this.style.background = '#f5f5f5'; });
+            row.addEventListener('mouseout', function() { this.style.background = ''; });
+            row.addEventListener('click', function() {
+                selectVoucher(v.code || '', Number(v.discountAmount || 0));
+                document.getElementById('voucherDropdown').style.display = 'none';
+            });
+            list.appendChild(row);
+        });
+    }
+
+    function selectVoucher(code, discount) {
+        var codeInput = document.getElementById('voucherCodeInput');
+        if (codeInput) {
+            codeInput.value = code ? (code + ' (-' + discount.toLocaleString('vi-VN') + 'đ)') : '';
+        }
+        var hidden = document.getElementById('voucherCodeHidden');
+        if (hidden) hidden.value = code;
+        voucherDiscount = discount;
+        recalcTotal();
+    }
+
+    function toggleVoucherDropdown() {
+        var dropdown = document.getElementById('voucherDropdown');
+        if (!dropdown) return;
+        var isVisible = dropdown.style.display !== 'none';
+        dropdown.style.display = isVisible ? 'none' : 'block';
+        // position under the input
+        var inp = document.getElementById('voucherCodeInput');
+        if (inp && !isVisible) {
+            dropdown.style.width = inp.offsetWidth + 'px';
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        var dropdown = document.getElementById('voucherDropdown');
+        var inp = document.getElementById('voucherCodeInput');
+        if (dropdown && inp && !dropdown.contains(e.target) && e.target !== inp) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    function loadCustomerVoucherByPhone(phone) {
+        if (!phone || phone.length < 9) {
+            hydrateVoucherSelect([]);
+            return;
+        }
+        fetch('/api/customer/vouchers?phone=' + encodeURIComponent(phone))
+            .then(function(r) { return r.json(); })
+            .then(function(data) { hydrateVoucherSelect(data); })
+            .catch(function() { hydrateVoucherSelect([]); });
+    }
+
     var phoneInput = document.querySelector('input[name="phone"]');
     var nameInput = document.querySelector('input[name="customerName"]');
 
-    phoneInput.addEventListener('blur', function() {
-        var phone = this.value.trim();
-        if (phone.length >= 9) {
+    if (phoneInput) {
+        phoneInput.addEventListener('blur', function() {
+            var phone = this.value.trim();
+            if (phone.length < 9) return;
+
             fetch('/api/customer/points?phone=' + encodeURIComponent(phone))
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     customerLoyaltyPoints = data.loyaltyPoints || 0;
-                    if (data.found && data.customerName && !nameInput.value.trim()) {
+                    if (data.found && data.customerName && nameInput && !nameInput.value.trim()) {
                         nameInput.value = data.customerName;
                     }
                     updateLoyaltyDisplay();
+                })
+                .catch(function() {
+                    customerLoyaltyPoints = 0;
+                    updateLoyaltyDisplay();
                 });
-        }
-    });
+
+            loadCustomerVoucherByPhone(phone);
+        });
+    }
 
     function updateLoyaltyDisplay() {
         var infoDiv = document.getElementById('loyaltyInfo');
@@ -352,19 +421,22 @@
         var moneySpan = document.getElementById('loyaltyMoneyDisplay');
 
         if (customerLoyaltyPoints > 0) {
-            infoDiv.style.display = 'block';
-            pointsSpan.textContent = customerLoyaltyPoints.toLocaleString('vi-VN');
-            moneySpan.textContent = customerLoyaltyPoints.toLocaleString('vi-VN');
+            if (infoDiv) infoDiv.style.display = 'block';
+            if (pointsSpan) pointsSpan.textContent = customerLoyaltyPoints.toLocaleString('vi-VN');
+            if (moneySpan) moneySpan.textContent = customerLoyaltyPoints.toLocaleString('vi-VN');
         } else {
-            infoDiv.style.display = 'none';
+            if (infoDiv) infoDiv.style.display = 'none';
+            loyaltyActive = false;
+            var toggle = document.getElementById('vipToggle');
+            if (toggle) toggle.classList.remove('on');
+            var hidden = document.getElementById('useLoyaltyPointsField');
+            if (hidden) hidden.value = 'false';
         }
         recalcTotal();
     }
 
     function toggleLoyaltyPoints(el) {
-        if (customerLoyaltyPoints <= 0) {
-            return;
-        }
+        if (customerLoyaltyPoints <= 0) return;
         el.classList.toggle('on');
         loyaltyActive = el.classList.contains('on');
         document.getElementById('useLoyaltyPointsField').value = loyaltyActive ? 'true' : 'false';
@@ -372,26 +444,43 @@
     }
 
     function recalcTotal() {
-        var discount = 0;
-        var discountRow = document.getElementById('discountRow');
-        var discountAmt = document.getElementById('discountAmount');
+        var baseTotal = subtotalAmount + shippingFee;
+        var appliedVoucher = Math.min(voucherDiscount, baseTotal);
+        var afterVoucher = Math.max(0, baseTotal - appliedVoucher);
+
+        var loyaltyDiscount = 0;
+        if (loyaltyActive && customerLoyaltyPoints > 0) {
+            loyaltyDiscount = Math.min(customerLoyaltyPoints, afterVoucher);
+        }
+
+        var finalTotal = Math.max(0, afterVoucher - loyaltyDiscount);
+
+        var voucherRow = document.getElementById('voucherDiscountRow');
+        var voucherAmt = document.getElementById('voucherDiscountAmount');
+        var loyaltyRow = document.getElementById('discountRow');
+        var loyaltyAmt = document.getElementById('discountAmount');
+
+        if (voucherRow && voucherAmt) {
+            voucherRow.style.display = appliedVoucher > 0 ? 'flex' : 'none';
+            voucherAmt.textContent = '-' + formatMoney(appliedVoucher);
+        }
+        if (loyaltyRow && loyaltyAmt) {
+            loyaltyRow.style.display = loyaltyDiscount > 0 ? 'flex' : 'none';
+            loyaltyAmt.textContent = '-' + formatMoney(loyaltyDiscount);
+        }
+
+        var summarySubtotal = document.getElementById('summarySubtotal');
+        var shippingEl = document.getElementById('shippingDisplay');
         var totalEl = document.getElementById('totalDisplay');
         var earnEl = document.getElementById('earnPointsDisplay');
 
-        if (loyaltyActive && customerLoyaltyPoints > 0) {
-            discount = Math.min(customerLoyaltyPoints, totalAmount);
-            discountRow.style.display = 'flex';
-            discountAmt.textContent = '-' + discount.toLocaleString('vi-VN') + 'đ';
-        } else {
-            discountRow.style.display = 'none';
-        }
-
-        var finalTotal = totalAmount - discount;
-        totalEl.textContent = finalTotal.toLocaleString('vi-VN') + 'đ';
-
-        var earnPoints = Math.floor(finalTotal / 1000);
-        earnEl.textContent = earnPoints.toLocaleString('vi-VN') + ' điểm';
+        if (summarySubtotal) summarySubtotal.textContent = formatMoney(subtotalAmount);
+        if (shippingEl) shippingEl.textContent = formatMoney(shippingFee);
+        if (totalEl) totalEl.textContent = formatMoney(finalTotal);
+        if (earnEl) earnEl.textContent = Math.floor(finalTotal / 1000).toLocaleString('vi-VN') + ' diem';
     }
+
+    recalcTotal();
 </script>
 
 </section>

@@ -50,9 +50,9 @@
                 <!-- HEADER ACTION BUTTONS -->
                 <div class="header-actions-group">
                     <!-- Đăng nhập -->
-                    <a th:href="@{/}" class="header-action-btn">
+                    <a th:href="@{/loyalty}" class="header-action-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        <span>Đăng nhập</span>
+                        <span>Tra cứu </span>
                     </a>
 
                     <!-- Giỏ hàng -->
@@ -77,7 +77,7 @@
                     <!-- DYNAMIC: Root categories from DB -->
                     <li th:each="cat : ${rootCategories}"
                         th:classappend="${cat.children != null and !cat.children.isEmpty()} ? 'has-list' : ''">
-                        <a th:href="@{/products(category=${cat.name})}" style="display:flex;align-items:center;gap:5px;">
+                        <a th:href="@{/tabs/category/{id}(id=${cat.id})}" style="display:flex;align-items:center;gap:5px;">
                             <i th:if="${cat.icon != null and !cat.icon.isEmpty()}" th:class="${cat.icon}" style="font-size:15px;"></i>
                             <span th:text="${cat.name}"
                                   th:classappend="${cat.children != null and !cat.children.isEmpty()} ? ' has-child' : ''">Category</span>
@@ -87,7 +87,7 @@
                             <div class="item-child">
                                 <strong th:text="${cat.name}">Parent</strong>
                                 <a th:each="child : ${cat.children}"
-                                   th:href="@{/products(category=${child.name})}">
+                                   th:href="@{/tabs/category/{id}(id=${child.id})}">
                                     <i th:if="${child.icon}" th:class="${child.icon}" style="width:25px;text-align:center;margin-right:5px;"></i>
                                     <h3 th:text="${child.name}">Sub Category</h3>
                                 </a>

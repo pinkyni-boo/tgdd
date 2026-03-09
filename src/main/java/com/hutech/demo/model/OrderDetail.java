@@ -18,6 +18,9 @@ public class OrderDetail {
     private Long id;
 
     private int quantity;
+    private double unitPrice;
+    private double discountPercent;
+    private boolean promotionalApplied;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

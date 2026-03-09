@@ -32,6 +32,14 @@
                             <label for="discount" class="form-label">Giảm giá (%):</label>
                             <input type="number" step="1" min="0" max="100" th:field="*{discount}" class="form-control" id="discount">
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="promotionQuantity" class="form-label">Số lượng khuyến mãi:</label>
+                            <input type="number" min="0" th:field="*{promotionQuantity}" class="form-control" id="promotionQuantity">
+                            <div class="form-text">Khi về 0, sản phẩm sẽ tự hết khuyến mãi và về giá gốc.</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6 mb-3 d-flex align-items-center">
                             <div class="form-check mt-3">
                                 <input type="checkbox" class="form-check-input" id="isPromotional" th:field="*{promotional}">
@@ -45,7 +53,7 @@
                          <div class="input-group">
                             <select th:field="*{category}" class="form-select" id="category">
                                 <option th:each="category : ${categories}"
-                                        th:value="${category.id}" th:text="${category.name}" th:selected="${category.id == product.category.id}"></option>
+                                        th:value="${category.id}" th:text="${category.name}"></option>
                             </select>
                              <a th:href="@{/categories/add}" class="btn btn-outline-secondary" title="Thêm danh mục mới">+</a>
                         </div>
@@ -60,7 +68,7 @@
                         <label for="image" class="form-label">Hình ảnh sản phẩm:</label>
                         <div class="d-flex align-items-center gap-3">
                             <div th:if="${product.image != null}" class="border rounded p-1">
-                                <img th:src="@{'/product-images/' + ${product.image}}" width="80" height="80" 
+                                <img th:src="${product.image.startsWith('http') ? product.image : '/product-images/' + product.image}" width="80" height="80"
                                      style="object-fit: cover; border: 1px solid #ddd;" />
                             </div>
                             <div class="flex-grow-1">

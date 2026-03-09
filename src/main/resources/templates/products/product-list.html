@@ -82,7 +82,11 @@
                                     <i class="fa-regular fa-image"></i>
                                 </div>
                             </td>
-                            <td class="admin-product-name" th:text="${product.name}">Iphone 15</td>
+                            <td class="admin-product-name">
+                                <div th:text="${product.name}">Iphone 15</div>
+                                <span th:if="${product.promotional}" class="admin-tag mt-1"
+                                      th:text="${'Flash Sale: ' + product.promotionQuantity + ' suất'}">Flash Sale</span>
+                            </td>
                             <td class="admin-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">20,000,000 VND</td>
                             <td>
                                 <span class="admin-tag" th:if="${product.category != null}" th:text="${product.category.name}">Phone</span>

@@ -50,6 +50,8 @@ public class HomeController {
             m.put("categoryName", p.getCategory() != null ? p.getCategory().getName() : "");
             m.put("categoryId", p.getCategory() != null ? p.getCategory().getId() : 0);
             m.put("promotional", p.isPromotional());
+            m.put("promotionQuantity", p.getPromotionQuantity());
+            m.put("originalPrice", p.getOriginalPrice());
             return m;
         }).collect(Collectors.toList());
     }

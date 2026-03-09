@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Tab San Pham</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-toolbar">
+                <div class="admin-title-block">
+                    <h3 class="admin-title">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                        <span th:text="${tabTitle}">Danh muc</span>
+                    </h3>
+                </div>
+                <div class="admin-actions">
+                    <a th:href="@{/}" class="admin-btn admin-btn--muted">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Ve trang chu
+                    </a>
+                </div>
+            </div>
+
+            <div class="admin-stat-row">
+                <div class="admin-stat-chip">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    So san pham:
+                    <strong th:text="${#lists.size(products)}">0</strong>
+                </div>
+            </div>
+
+            <div class="admin-table-card" th:if="${!#lists.isEmpty(products)}">
+                <div class="table-responsive">
+                    <table class="table admin-table align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="width:100px;">Anh</th>
+                            <th>Ten san pham</th>
+                            <th>Gia</th>
+                            <th>Danh muc</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${products}">
+                            <td th:text="${product.id}">1</td>
+                            <td>
+                                <img class="admin-thumb"
+                                     th:src="${product.image != null and product.image.startsWith('http') ? product.image : '/product-images/' + product.image}"
+                                     alt="Product">
+                            </td>
+                            <td class="admin-product-name" th:text="${product.name}">Product</td>
+                            <td class="admin-price" th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                            <td>
+                                <span class="admin-tag" th:text="${product.category != null ? product.category.name : 'Khac'}">Category</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-empty" th:if="${#lists.isEmpty(products)}">
+                <p>Tab nay hien tai chua co san pham.</p>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

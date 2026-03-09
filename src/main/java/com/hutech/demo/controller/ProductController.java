@@ -89,9 +89,13 @@ public class ProductController {
 
     // For editing a product
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+    public String showEditForm(@PathVariable Long id, Model model,
+                               org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        Product product = productService.getProductById(id).orElse(null);
+        if (product == null) {
+            redirectAttributes.addFlashAttribute("error", "Khong tim thay san pham ID: " + id);
+            return "redirect:/products";
+        }
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "/products/update-product";

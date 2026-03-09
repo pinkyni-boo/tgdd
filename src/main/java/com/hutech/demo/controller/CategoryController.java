@@ -1,4 +1,4 @@
-﻿package com.hutech.demo.controller;
+package com.hutech.demo.controller;
 
 import com.hutech.demo.model.Category;
 import com.hutech.demo.service.CategoryService;

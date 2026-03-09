@@ -1,17 +1,17 @@
 // ============= TGDD Clone v2024 JS =============
-// Matches thegioididong.com home page interactions
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-    // ===== FORMAT PRICE HELPER =====
     function formatPrice(price) {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫';
+        var value = Number(price || 0);
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫';
     }
 
-    // ===== BUILD PRODUCT CARD HTML =====
     function buildProductCard(p) {
         var imgSrc = p.image || 'https://placehold.co/207x207/png?text=No+Image';
         var originalPrice = '';
+        var promoHtml = '';
+
         if (p.discount > 0) {
             var orig = Math.round(p.price * 100 / (100 - p.discount));
             originalPrice = '<span class="price-and-discount">' +
@@ -19,44 +19,54 @@ $(document).ready(function() {
                 '<small>-' + Math.round(p.discount) + '%</small>' +
                 '</span>';
         }
+
+        var promoQty = Number(p.promotionQuantity || 0);
+        if (p.promotional && promoQty > 0) {
+            var promoPercent = Math.max(12, Math.min(100, promoQty * 5));
+            promoHtml = '<div class="fs-contain">' +
+                '<img width="15" height="15" src="//cdnv2.tgdd.vn/webmwg/2024/ContentMwg/images/homev2/flash-sale.png" alt="icon">' +
+                '<span class="rq_count fscount"><i style="width:' + promoPercent + '%;" class="fs-iconfire"></i><b>Còn ' + promoQty + ' suất</b></span>' +
+                '</div>';
+        }
+
         return '<div class="item" data-id="' + p.id + '" data-category-id="' + (p.categoryId || 0) + '">' +
             '<a href="/products/' + p.id + '" class="remain_quantity main-contain">' +
-                '<div class="item-img"><img src="' + imgSrc + '" alt="' + (p.name || '') + '"></div>' +
-                '<h3>' + (p.name || '') + '</h3>' +
-                '<strong class="price"><span>' + formatPrice(p.price) + '</span>' + originalPrice + '</strong>' +
-                '<div class="fs-contain">' +
-                    '<img width="15" height="15" src="//cdnv2.tgdd.vn/webmwg/2024/ContentMwg/images/homev2/flash-sale.png" alt="icon">' +
-                    '<span class="rq_count fscount"><i style="width:65%;" class="fs-iconfire"></i><b>Đang bán chạy</b></span>' +
-                '</div>' +
+            '<div class="item-img"><img src="' + imgSrc + '" alt="' + (p.name || '') + '"></div>' +
+            '<h3>' + (p.name || '') + '</h3>' +
+            '<strong class="price"><span>' + formatPrice(p.price) + '</span>' + originalPrice + '</strong>' +
+            promoHtml +
             '</a>' +
             '<div class="btn-buy">' +
-                '<a href="/products/' + p.id + '" class="see-detail hide">Xem chi tiết</a>' +
-                '<a href="/cart/add?productId=' + p.id + '&quantity=1" class="buy-now">Mua ngay</a>' +
+            '<a href="/products/' + p.id + '" class="see-detail hide">Xem chi tiết</a>' +
+            '<a href="/cart/add?productId=' + p.id + '&quantity=1" class="buy-now">Mua ngay</a>' +
             '</div>' +
-        '</div>';
+            '</div>';
     }
 
-    // ===== PRODUCT TABS SWITCHING WITH AJAX =====
     var $productList = $('.listproduct.slider-flashsale');
-    var allProductsLoaded = false;  // track if "view all" has been clicked
+    var allProductsLoaded = false;
 
-    $('.products-tabs li').on('click', function(e) {
+    $('.products-tabs li').on('click', function (e) {
+        if ($(this).closest('#homePromoTabs').length) {
+            return;
+        }
         e.preventDefault();
         e.stopPropagation();
 
-        // Update tab state
+        var link = $(this).find('a').attr('href');
+        if (link && link !== 'javascript:;' && link !== '#') {
+            window.location.href = link;
+            return;
+        }
+
         $('.products-tabs li').removeClass('active-tab');
         $(this).addClass('active-tab');
 
         var categoryId = $(this).data('category-id');
-
-        // If it's the fixed banner tabs (no category-id), show all products
         if (categoryId === undefined || categoryId === null) {
             showAllItems();
             return;
         }
-
-        // Filter by category via AJAX
         filterByCategory(categoryId);
     });
 
@@ -65,11 +75,10 @@ $(document).ready(function() {
     }
 
     function filterByCategory(categoryId) {
-        // First try client-side filtering
         var $items = $productList.find('.item');
         var hasMatch = false;
 
-        $items.each(function() {
+        $items.each(function () {
             var itemCatId = parseInt($(this).data('category-id')) || 0;
             if (itemCatId === parseInt(categoryId)) {
                 $(this).show();
@@ -79,12 +88,11 @@ $(document).ready(function() {
             }
         });
 
-        // If no match found client-side, fetch from server
         if (!hasMatch) {
-            $.getJSON('/api/products', { categoryId: categoryId }, function(data) {
+            $.getJSON('/api/products', {categoryId: categoryId}, function (data) {
                 if (data && data.length > 0) {
                     var html = '';
-                    data.forEach(function(p) {
+                    data.forEach(function (p) {
                         html += buildProductCard(p);
                     });
                     $productList.html(html);
@@ -95,45 +103,39 @@ $(document).ready(function() {
         }
     }
 
-    // ===== VIEW ALL PRODUCTS =====
-    $('#viewall-products').on('click', function(e) {
+    $('#viewall-products').on('click', function (e) {
         e.preventDefault();
         if (allProductsLoaded) {
-            // Already loaded - just show all and reset tab
             showAllItems();
             $('.products-tabs li').removeClass('active-tab');
             $('.products-tabs li:first').addClass('active-tab');
             return;
         }
 
-        // Fetch ALL products from server
-        $.getJSON('/api/products', function(data) {
+        $.getJSON('/api/products', function (data) {
             if (data && data.length > 0) {
                 var html = '';
-                data.forEach(function(p) {
+                data.forEach(function (p) {
                     html += buildProductCard(p);
                 });
                 $productList.html(html);
                 allProductsLoaded = true;
-                // Reset tab
                 $('.products-tabs li').removeClass('active-tab');
                 $('.products-tabs li:first').addClass('active-tab');
             }
         });
     });
 
-    // ===== MAIN MENU DROPDOWN (hover - exact TGDD behavior) =====
     var $menuHaslist = $('.main-menu > li.has-list');
-    $menuHaslist.on('mouseenter', function() {
+    $menuHaslist.on('mouseenter', function () {
         $(this).find('.navmwg').css('display', 'flex');
         $('.header-mask').addClass('active');
     });
-    $menuHaslist.on('mouseleave', function() {
+    $menuHaslist.on('mouseleave', function () {
         $(this).find('.navmwg').css('display', '');
         $('.header-mask').removeClass('active');
     });
 
-    // ===== FLASH SALE COUNTDOWN TIMER =====
     function updateCountdown() {
         var now = new Date();
         var endOfDay = new Date();
@@ -150,41 +152,36 @@ $(document).ready(function() {
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    // ===== FLASH SALE TIMELINE TABS =====
-    $('.listing-timeline a').on('click', function(e) {
+    $('.listing-timeline a').on('click', function (e) {
         e.preventDefault();
         $('.listing-timeline a').removeClass('active');
         $(this).addClass('active');
     });
 
-    // ===== POPUP BANNER close =====
-    $('.icon-close-popup').on('click', function() {
+    $('.icon-close-popup').on('click', function () {
         $(this).closest('.popup-banner').fadeOut(300);
     });
 
-    // ===== BIG BANNER close =====
-    $('.close-bigBanner').on('click', function() {
+    $('.close-bigBanner').on('click', function () {
         $(this).closest('.big-banner').slideUp(300);
     });
 
-    // ===== HEADER SEARCH FOCUS (exact TGDD) =====
-    $('.header__search .input-search').on('focus', function() {
+    $('.header__search .input-search').on('focus', function () {
         $(this).closest('.header__search').addClass('active');
     });
-    $('.header__search .input-search').on('blur', function() {
-        setTimeout(function() {
+
+    $('.header__search .input-search').on('blur', function () {
+        setTimeout(function () {
             $('.header__search').removeClass('active');
         }, 200);
     });
 
-    // ===== HEADER-OVERLAY close =====
-    $('.header-overlay a').on('click', function(e) {
+    $('.header-overlay a').on('click', function (e) {
         e.preventDefault();
         $('header.header').attr('data-sub', '0');
         $('.header-overlay').hide();
     });
 
-    // ===== BANNER TOP BAR background color =====
     var $bannerItem = $('.banner-media .media-slider .item');
     if ($bannerItem.length && $bannerItem.data('background-color')) {
         $('.banner-media').css('background-color', $bannerItem.data('background-color'));

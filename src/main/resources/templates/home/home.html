@@ -406,58 +406,58 @@
             </a>
         </div>
     </div>
-    <div class="body-home" style="max-width: 1200px; margin: 0 auto;">
+    <div class="body-home home-shell" style="max-width: 1200px; margin: 0 auto;">
         <div class="big-banner">
             <a href="#">
                 <img src="//cdnv2.tgdd.vn/mwg-static/tgdd/Banner/10/a7/10a75948efc3dc81a81b405dae99461a.jpg" alt="Banner Big" width="1200">
             </a>
         </div>
 
-        <section class="main-container hot-promotion homeproducts-block">
+        <section class="main-container hot-promotion homeproducts-block home-showcase">
             <h3 style="padding-left: 10px;">Khuyến mãi online</h3>
 
-            <ul class="products-tabs col9">
-                <li class="active-tab fs-new-item" data-groupid="-1" data-id="flashsale" data-is-flashsale-tab="true">
+            <ul class="products-tabs col9" id="homePromoTabs">
+                <li class="active-tab fs-new-item" data-groupid="-1" data-id="flashsale" data-tab-key="all" data-is-flashsale-tab="true">
                     <a href="javascript:;" class="fs-new-item-title">
                         <img src="https://cdnv2.tgdd.vn/mwg-static/common/Campaign/8a/5c/8a5c223deb851bcc8f713215485e4159.png" alt="FlashSale">
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="10962" data-id="flashsaleCross">
+                <li class="fs-new-item" data-groupid="10962" data-id="flashsaleCross" data-tab-key="all">
                     <a href="javascript:;" class="fs-new-item-title">
                         <img src="https://cdnv2.tgdd.vn/mwg-static/common/Campaign/c0/64/c064486535cfa403ef9dc997848e1720.png" alt="Flashsale">
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="9788" data-id="kmo">
+                <li class="fs-new-item" data-groupid="9788" data-id="kmo" data-tab-key="all">
                     <a href="javascript:;" class="fs-new-item-title">
                         <img src="https://cdnv2.tgdd.vn/mwg-static/common/Campaign/7a/e0/7ae0723d3d978fd4c8a2c77f3bf4bd3a.png" alt="Online Only">
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="9776" data-id="kmo">
+                <li class="fs-new-item" data-groupid="9776" data-id="kmo" data-tab-key="dien-thoai">
                     <a href="javascript:;" class="fs-new-item-title">
                         <span class="allimg">Điện Thoại</span>
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="9845" data-id="kmo">
+                <li class="fs-new-item" data-groupid="9845" data-id="kmo" data-tab-key="apple">
                     <a href="javascript:;" class="fs-new-item-title">
                         <span class="allimg">Apple</span>
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="9777" data-id="kmo">
+                <li class="fs-new-item" data-groupid="9777" data-id="kmo" data-tab-key="laptop">
                     <a href="javascript:;" class="fs-new-item-title">
                         <span class="allimg">Laptop</span>
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="9778" data-id="kmo">
+                <li class="fs-new-item" data-groupid="9778" data-id="kmo" data-tab-key="phu-kien">
                     <a href="javascript:;" class="fs-new-item-title">
                         <span class="allimg">Phụ Kiện</span>
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="9846" data-id="kmo">
+                <li class="fs-new-item" data-groupid="9846" data-id="kmo" data-tab-key="dong-ho">
                     <a href="javascript:;" class="fs-new-item-title">
                         <span class="allimg">Đồng Hồ</span>
                     </a>
                 </li>
-                <li class="fs-new-item" data-groupid="10528" data-id="PC">
+                <li class="fs-new-item" data-groupid="10528" data-id="PC" data-tab-key="pc-may-in">
                     <a href="javascript:;" class="fs-new-item-title">
                         <span class="allimg">PC, Máy in</span>
                     </a>
@@ -513,30 +513,30 @@
                     <div class="flashsale-block theme-fs" id="flashsale">
                         <div class="stage-two" style="display: none;"><div class="load"></div></div>
                         <div class="timeline-title" data-programid="102">
-                            <div class="listing-timeline col5 full">
-                                <a href="javascript:;" class="endtime hide" data-countdown="3/8/2026 9:29:00 PM" data-begin="3/8/2026 6:00:00 PM" data-ishappening="True">
+                            <div class="listing-timeline col5 full" id="flashsale-timeline">
+                                <a href="javascript:;" class="endtime hide" id="flashsale-live-slot">
                                     <span class="title-end">Chỉ còn: <br></span>
                                     <span class="countdown-timer">
-                                        <label id="hour">00</label>
-                                        <label id="minute">00</label>
-                                        <label id="second">01</label>
+                                        <label id="fs-hour">00</label>
+                                        <label id="fs-minute">00</label>
+                                        <label id="fs-second">00</label>
                                     </span>
                                 </a>
-                                <a href="javascript:;" class="new active">
-                                    <span>Sắp diễn ra </span>
-                                    <span>21:30</span>
+                                <a href="javascript:;" class="new active" id="flashsale-next-slot">
+                                    <span id="flashsale-next-label">Sắp diễn ra</span>
+                                    <span id="flashsale-next-time">21:30</span>
                                 </a>
                                 <a href="javascript:;" class="new">
-                                    <span>Ngày mai </span>
-                                    <span>00:00</span>
+                                    <span class="flashsale-slot-label">Ngày mai</span>
+                                    <span class="flashsale-slot-time">00:00</span>
                                 </a>
                                 <a href="javascript:;" class="new">
-                                    <span>Ngày mai </span>
-                                    <span>09:00</span>
+                                    <span class="flashsale-slot-label">Ngày mai</span>
+                                    <span class="flashsale-slot-time">09:00</span>
                                 </a>
                                 <a href="javascript:;" class="new">
-                                    <span>Ngày mai </span>
-                                    <span>12:00</span>
+                                    <span class="flashsale-slot-label">Ngày mai</span>
+                                    <span class="flashsale-slot-time">12:00</span>
                                 </a>
                             </div>
                         </div>
@@ -560,8 +560,9 @@
                                         <div class="fs-contain">
                                             <img width="15" height="15" src="//cdnv2.tgdd.vn/webmwg/2024/ContentMwg/images/homev2/flash-sale.png" alt="icon flashsale">
                                             <span class="rq_count fscount">
-                                                <i style="width:50%;" class="fs-iconfire"></i>
-                                                <b>Còn hàng</b>
+                                                <i class="fs-iconfire"
+                                                   th:style="'width:' + ${product.promotionQuantity > 20 ? 100 : (product.promotionQuantity > 0 ? product.promotionQuantity * 5 : 15)} + '%;'"></i>
+                                                <b th:text="${product.promotionQuantity > 0 ? 'Còn ' + product.promotionQuantity + ' suất' : 'Còn hàng'}">Còn hàng</b>
                                             </span>
                                         </div>
                                     </a>
@@ -582,10 +583,11 @@
         </section><!-- end hot-promotion -->
 
         <!-- All Products Section -->
-        <section class="main-container hot-promotion homeproducts-block" style="margin-top: 16px;">
+        <section class="main-container hot-promotion homeproducts-block home-all-products" style="margin-top: 16px;">
             <h3 style="padding-left: 10px;">Tất cả sản phẩm</h3>
-            <div class="listproduct" style="padding: 15px;">
-                <div class="item" th:each="product : ${products}" th:attr="data-id=${product.id}">
+            <div class="listproduct" style="padding: 15px;" id="homeAllProductsList">
+                <div class="item all-product-item" th:each="product : ${products}"
+                     th:attr="data-id=${product.id},data-name=${product.name},data-category=${product.category != null ? product.category.name : ''}">
                     <a th:href="@{'/products/' + ${product.id}}" class="main-contain">
                         <div class="item-img">
                             <img th:src="${product.image != null and (product.image.startsWith('http') or product.image.startsWith('//'))} ? ${product.image} : '/product-images/' + ${product.image}" th:alt="${product.name}" width="207" height="207"/>
@@ -598,6 +600,14 @@
                                 <small th:text="${'-' + #numbers.formatInteger(product.discount, 0) + '%'}">-0%</small>
                             </span>
                         </strong>
+                        <div class="fs-contain" th:if="${product.promotional and product.promotionQuantity > 0}">
+                            <img width="15" height="15" src="//cdnv2.tgdd.vn/webmwg/2024/ContentMwg/images/homev2/flash-sale.png" alt="icon flashsale">
+                            <span class="rq_count fscount">
+                                <i class="fs-iconfire"
+                                   th:style="'width:' + ${product.promotionQuantity > 20 ? 100 : (product.promotionQuantity > 0 ? product.promotionQuantity * 5 : 15)} + '%;'"></i>
+                                <b th:text="${'Còn ' + product.promotionQuantity + ' suất'}">Còn hàng</b>
+                            </span>
+                        </div>
                     </a>
                     <div class="btn-buy">
                         <a th:href="@{/cart/add(productId=${product.id},quantity=1)}" class="buy-now">Mua ngay</a>
@@ -606,55 +616,182 @@
                 <div th:if="${#lists.isEmpty(products)}" style="grid-column: 1/-1; padding: 20px; text-align: center; color: #999;">
                     <p>Chưa có sản phẩm nào. Vui lòng thêm sản phẩm trong phần quản trị.</p>
                 </div>
+                <div id="homeProductsEmpty" style="display:none; grid-column: 1/-1; padding: 20px; text-align: center; color: #999;">
+                    <p>Khong co san pham phu hop voi tab nay.</p>
+                </div>
             </div>
         </section>
 
     </div><!-- end body-home -->
     <script>
-        // Đếm ngược Flash Sale section 2
         (function () {
-            var endTime2 = new Date("3/8/2026 9:29:00 PM").getTime();
-            var h2 = document.getElementById('hour2');
-            var m2 = document.getElementById('minute2');
-            var s2 = document.getElementById('second2');
-            var h2b = document.getElementById('hour2b');
-            var m2b = document.getElementById('minute2b');
-            var s2b = document.getElementById('second2b');
-            function pad(n) { return n < 10 ? '0' + n : n; }
-            function tick2() {
-                var diff = Math.max(0, Math.floor((endTime2 - Date.now()) / 1000));
-                var hv = pad(Math.floor(diff / 3600));
-                var mv = pad(Math.floor((diff % 3600) / 60));
-                var sv = pad(diff % 60);
-                if (h2) h2.textContent = hv;
-                if (m2) m2.textContent = mv;
-                if (s2) s2.textContent = sv;
-                if (h2b) h2b.textContent = hv;
-                if (m2b) m2b.textContent = mv;
-                if (s2b) s2b.textContent = sv;
-                if (diff > 0) setTimeout(tick2, 1000);
+            var timeline = document.getElementById('flashsale-timeline');
+            if (!timeline) return;
+
+            var liveSlotEl = document.getElementById('flashsale-live-slot');
+            var nextSlotEl = document.getElementById('flashsale-next-slot');
+            var nextLabelEl = document.getElementById('flashsale-next-label');
+            var nextTimeEl = document.getElementById('flashsale-next-time');
+            var futureSlotEls = Array.prototype.slice.call(timeline.querySelectorAll('.new')).slice(1);
+
+            var fsHourEl = document.getElementById('fs-hour');
+            var fsMinuteEl = document.getElementById('fs-minute');
+            var fsSecondEl = document.getElementById('fs-second');
+
+            var slotMinutes = [0, 9 * 60, 12 * 60, 21 * 60 + 30];
+            var liveWindowMs = (3 * 60 + 30) * 60 * 1000;
+
+            function pad(value) {
+                return value < 10 ? '0' + value : String(value);
             }
-            tick2();
+
+            function formatTime(date) {
+                return pad(date.getHours()) + ':' + pad(date.getMinutes());
+            }
+
+            function startOfDay(date) {
+                return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            }
+
+            function dayDiff(from, to) {
+                var oneDayMs = 24 * 60 * 60 * 1000;
+                return Math.floor((startOfDay(to).getTime() - startOfDay(from).getTime()) / oneDayMs);
+            }
+
+            function formatRelativeDay(targetDate, now) {
+                var diff = dayDiff(now, targetDate);
+                if (diff === 0) return 'Hôm nay';
+                if (diff === 1) return 'Ngày mai';
+                return 'Ngày ' + pad(targetDate.getDate()) + '/' + pad(targetDate.getMonth() + 1);
+            }
+
+            function buildSlots(now) {
+                var slots = [];
+                var today = startOfDay(now);
+                for (var offset = -1; offset <= 3; offset++) {
+                    var day = new Date(today);
+                    day.setDate(today.getDate() + offset);
+                    for (var i = 0; i < slotMinutes.length; i++) {
+                        var slot = new Date(day);
+                        slot.setHours(Math.floor(slotMinutes[i] / 60), slotMinutes[i] % 60, 0, 0);
+                        slots.push(slot);
+                    }
+                }
+                slots.sort(function (a, b) { return a.getTime() - b.getTime(); });
+                return slots;
+            }
+
+            function findNextSlotIndex(slots, nowMs) {
+                for (var i = 0; i < slots.length; i++) {
+                    if (slots[i].getTime() > nowMs) return i;
+                }
+                return -1;
+            }
+
+            function renderTimeline() {
+                var now = new Date();
+                var nowMs = now.getTime();
+                var slots = buildSlots(now);
+                var nextIndex = findNextSlotIndex(slots, nowMs);
+                if (nextIndex < 0) return;
+
+                var nextSlot = slots[nextIndex];
+                var prevSlot = nextIndex > 0 ? slots[nextIndex - 1] : null;
+                var liveEndMs = prevSlot ? Math.min(nextSlot.getTime(), prevSlot.getTime() + liveWindowMs) : 0;
+                var isLive = prevSlot && nowMs >= prevSlot.getTime() && nowMs < liveEndMs;
+
+                if (isLive) {
+                    liveSlotEl.classList.remove('hide');
+                    liveSlotEl.classList.add('active');
+                    nextSlotEl.classList.remove('active');
+
+                    var remainSec = Math.max(0, Math.floor((liveEndMs - nowMs) / 1000));
+                    fsHourEl.textContent = pad(Math.floor(remainSec / 3600));
+                    fsMinuteEl.textContent = pad(Math.floor((remainSec % 3600) / 60));
+                    fsSecondEl.textContent = pad(remainSec % 60);
+
+                    nextLabelEl.textContent = formatRelativeDay(nextSlot, now);
+                    nextTimeEl.textContent = formatTime(nextSlot);
+                } else {
+                    liveSlotEl.classList.add('hide');
+                    liveSlotEl.classList.remove('active');
+                    nextSlotEl.classList.add('active');
+
+                    nextLabelEl.textContent = 'Sắp diễn ra';
+                    nextTimeEl.textContent = formatTime(nextSlot);
+                }
+
+                for (var i = 0; i < futureSlotEls.length; i++) {
+                    var slot = slots[nextIndex + i + 1];
+                    if (!slot) continue;
+
+                    var spans = futureSlotEls[i].querySelectorAll('span');
+                    if (spans.length < 2) continue;
+
+                    spans[0].textContent = formatRelativeDay(slot, now);
+                    spans[1].textContent = formatTime(slot);
+                }
+            }
+
+            renderTimeline();
+            setInterval(renderTimeline, 1000);
         })();
 
-        // Đếm ngược Flash Sale
         (function () {
-            var endTime = new Date("3/8/2026 9:29:00 PM").getTime();
-            var hourEl = document.getElementById('hour');
-            var minEl  = document.getElementById('minute');
-            var secEl  = document.getElementById('second');
+            var tabsRoot = document.getElementById('homePromoTabs');
+            var productsRoot = document.getElementById('homeAllProductsList');
+            var emptyBlock = document.getElementById('homeProductsEmpty');
+            if (!tabsRoot || !productsRoot) return;
 
-            function pad(n) { return n < 10 ? '0' + n : n; }
-
-            function tick() {
-                var now  = Date.now();
-                var diff = Math.max(0, Math.floor((endTime - now) / 1000));
-                hourEl.textContent = pad(Math.floor(diff / 3600));
-                minEl.textContent  = pad(Math.floor((diff % 3600) / 60));
-                secEl.textContent  = pad(diff % 60);
-                if (diff > 0) setTimeout(tick, 1000);
+            function normalize(value) {
+                return (value || '')
+                    .toString()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '');
             }
-            tick();
+
+            var keywordMap = {
+                'all': [],
+                'dien-thoai': ['dien thoai', 'phone', 'iphone', 'samsung', 'xiaomi', 'oppo'],
+                'apple': ['apple', 'iphone', 'ipad', 'macbook', 'airpods', 'watch'],
+                'laptop': ['laptop', 'notebook', 'macbook'],
+                'phu-kien': ['phu kien', 'sac', 'cap', 'tai nghe', 'loa', 'camera', 'chuot', 'ban phim', 'pin'],
+                'dong-ho': ['dong ho', 'watch'],
+                'pc-may-in': ['pc', 'desktop', 'may in', 'printer']
+            };
+
+            function matchesTab(item, tabKey) {
+                if (!tabKey || tabKey === 'all') return true;
+                var haystack = normalize((item.dataset.name || '') + ' ' + (item.dataset.category || ''));
+                var keys = keywordMap[tabKey] || [];
+                for (var i = 0; i < keys.length; i++) {
+                    if (haystack.indexOf(keys[i]) >= 0) return true;
+                }
+                return false;
+            }
+
+            function applyFilter(tabKey) {
+                var items = productsRoot.querySelectorAll('.all-product-item');
+                var visibleCount = 0;
+                items.forEach(function (item) {
+                    var show = matchesTab(item, tabKey);
+                    item.style.display = show ? '' : 'none';
+                    if (show) visibleCount++;
+                });
+                if (emptyBlock) {
+                    emptyBlock.style.display = visibleCount === 0 ? 'block' : 'none';
+                }
+            }
+
+            tabsRoot.querySelectorAll('li').forEach(function (li) {
+                li.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    tabsRoot.querySelectorAll('li').forEach(function (el) { el.classList.remove('active-tab'); });
+                    li.classList.add('active-tab');
+                    applyFilter(li.dataset.tabKey || 'all');
+                });
+            });
         })();
     </script>
 </div>

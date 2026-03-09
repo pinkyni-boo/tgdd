@@ -75,14 +75,10 @@
                                 <i th:if="${category.icon != null and #strings.contains(category.icon, 'fa-')}" th:class="${category.icon}"></i>
                                 <span th:text="${category.name}">Electronics</span>
                             </td>
-                            <td>
-                                <div class="admin-icon-cell" th:if="${category.icon != null and !category.icon.isEmpty()}">
-                                    <span class="admin-icon-preview">
-                                        <i th:if="${#strings.contains(category.icon, 'fa-')}" th:class="${category.icon}"></i>
-                                        <i th:unless="${#strings.contains(category.icon, 'fa-')}" class="fa-solid fa-tag"></i>
-                                    </span>
-                                </div>
-                                <span class="admin-icon-code" th:if="${category.icon == null or category.icon.isEmpty()}">-</span>
+                            <td class="admin-icon-column" th:attr="title=${category.icon}">
+                                <span class="admin-icon-preview">
+                                    <i th:class="${category.icon != null and #strings.contains(category.icon, 'fa-') ? category.icon : 'fa-solid fa-tag'}"></i>
+                                </span>
                             </td>
                             <td>
                                 <span th:if="${category.parent != null}" class="admin-tag" th:text="${category.parent.name}">Parent</span>

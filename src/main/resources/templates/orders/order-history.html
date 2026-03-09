@@ -3,85 +3,109 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Tra Cứu Đơn Hàng</title>
+    <title>Tra cuu don hang</title>
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="bg-white rounded shadow-sm p-4 mb-4">
-                <h3 class="section-title">Tra Cứu Lịch Sử Đơn Hàng</h3>
-                <p class="text-muted small mb-4">Nhập tên khách hàng bạn đã dùng khi đặt hàng để xem danh sách đơn hàng.</p>
-                
-                <form th:action="@{/order/history}" method="post" class="d-flex gap-2">
-                    <input type="text" name="customerName" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" required th:value="${customerName}">
-                    <button type="submit" class="btn btn-primary-tgdd fw-bold px-4">
-                        <i class="fa-solid fa-magnifying-glass me-2"></i> TÌM KIẾM
-                    </button>
-                </form>
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-toolbar">
+                <div class="admin-title-block">
+                    <h3 class="admin-title">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Tra cuu don hang
+                    </h3>
+                    <p class="admin-subtitle">Nhap so dien thoai hoac ten khach hang de xem lich su don</p>
+                </div>
             </div>
 
+            <div th:if="${error}" class="alert alert-danger admin-alert" role="alert" th:text="${error}"></div>
+
+            <form th:action="@{/order/history}" method="post" class="row g-2 mb-3">
+                <div class="col-md-9">
+                    <input type="text"
+                           name="keyword"
+                           class="form-control"
+                           placeholder="Vi du: 097xxxxxxx hoac Nguyen Van A"
+                           required
+                           th:value="${keyword}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="admin-btn admin-btn--accent w-100">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Tra cuu
+                    </button>
+                </div>
+            </form>
+
             <div th:if="${orders != null}">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold m-0 text-uppercase">Kết quả tìm kiếm</h5>
-                    <span class="badge bg-secondary" th:text="${orders.size()} + ' đơn hàng'"></span>
+                <div class="admin-stat-row mb-2">
+                    <div class="admin-stat-chip">
+                        <i class="fa-solid fa-box-open"></i>
+                        Ket qua:
+                        <strong th:text="${orders.size()}">0</strong>
+                        don
+                    </div>
                 </div>
-                
-                <div th:if="${orders.empty}" class="text-center py-5 bg-white rounded shadow-sm">
-                    <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Không tìm thấy đơn hàng nào với tên này.</p>
+
+                <div th:if="${orders.empty}" class="admin-empty">
+                    <p>Khong tim thay don hang phu hop.</p>
                 </div>
 
-                <div th:unless="${orders.empty}" class="d-flex flex-column gap-3">
-                    <!-- Order Card Loop -->
-                    <div th:each="order : ${orders}" class="modern-card p-0 overflow-hidden">
-                        <!-- Card Header -->
-                        <div class="d-flex justify-content-between align-items-center p-3 bg-light border-bottom">
-                            <div>
-                                <span class="fw-bold me-2">Đơn hàng <span class="text-primary">#DH-[[${order.id}]]</span></span>
-                                <span class="text-muted small"><i class="fa-regular fa-user me-1"></i> [[${order.customerName}]]</span>
-                            </div>
-                            <span class="badge" 
-                                  th:classappend="${order.status == 'PENDING' ? 'bg-warning text-dark' : 'bg-success'}"
-                                  th:text="${order.status == 'PENDING' ? 'Chờ xác nhận' : 'Đã hoàn thành'}">
-                                Trạng thái
-                            </span>
-                        </div>
-
-                        <!-- Order Items -->
-                        <div class="p-3">
-                             <div th:each="detail : ${order.orderDetails}" class="d-flex align-items-center mb-3 border-bottom pb-2 last-no-border">
-                                <img th:if="${detail.product.image != null}"
-                                     th:src="${detail.product.image.startsWith('http') ? detail.product.image : '/product-images/' + detail.product.image}"
-                                     class="rounded border me-3" width="50" height="50" style="object-fit: cover;">
-                                
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-0 fw-bold small" th:text="${detail.product.name}">Product Name</h6>
-                                    <div class="d-flex justify-content-between align-items-center mt-1">
-                                        <span class="text-muted small">Số lượng: <span class="fw-bold text-dark">[[${detail.quantity}]]</span></span>
-                                    </div>
-                                </div>
-                                
-                                <span class="fw-bold text-danger text-end" style="min-width: 80px;" 
-                                      th:text="${#numbers.formatDecimal(detail.product.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">
-                                </span>
-                             </div>
-                        </div>
-
-                        <!-- Card Footer -->
-                        <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
-                            <span class="text-muted small">Tổng tiền thanh toán:</span>
-                            <span class="text-danger fw-bold fs-5" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
-                        </div>
+                <div th:unless="${orders.empty}" class="admin-table-card">
+                    <div class="table-responsive">
+                        <table class="table admin-table align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Khach hang</th>
+                                <th>So dien thoai</th>
+                                <th>Tong tien</th>
+                                <th>Trang thai</th>
+                                <th>Thanh toan</th>
+                                <th>Chi tiet</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="${order.id}">1</td>
+                                <td th:text="${order.customerName}">Khach hang</td>
+                                <td th:text="${order.phone != null and !#strings.isEmpty(order.phone) ? order.phone : '-'}">-</td>
+                                <td class="admin-price"
+                                    th:text="${#numbers.formatDecimal(order.totalAmount > 0 ? order.totalAmount : order.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                    0đ
+                                </td>
+                                <td>
+                                    <span class="admin-tag"
+                                          th:classappend="${order.status == 'PENDING'} ? ' admin-tag--muted' : ' admin-tag--success'"
+                                          th:text="${order.status != null ? order.status : 'PENDING'}">
+                                        PENDING
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="admin-tag"
+                                          th:classappend="${order.paymentStatus == 'PAID'} ? ' admin-tag--success' : ' admin-tag--muted'"
+                                          th:text="${order.paymentStatus != null ? order.paymentStatus : 'UNPAID'}">
+                                        UNPAID
+                                    </span>
+                                </td>
+                                <td>
+                                    <a th:if="${order.phone != null and !#strings.isEmpty(order.phone)}"
+                                       th:href="@{/order/history/detail/{id}(id=${order.id}, phone=${order.phone})}"
+                                       class="admin-row-btn admin-row-btn--edit">
+                                        <i class="fa-solid fa-eye"></i>
+                                        Xem
+                                    </a>
+                                    <span th:if="${order.phone == null or #strings.isEmpty(order.phone)}" class="text-muted">Khong co SDT</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <style>
-        .last-no-border:last-child { border-bottom: none !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
-    </style>
 </section>
 </body>
 </html>

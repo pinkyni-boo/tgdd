@@ -120,6 +120,13 @@ public class HomepageProductSeeder implements CommandLineRunner {
         p.setPrice(price);
         p.setDiscount(discount);
         p.setPromotional(isFlashSale);
+        p.setPromotionQuantity(isFlashSale ? 12 : 0);
+        if (discount > 0 && discount < 100) {
+            double originalPrice = Math.round(price * 10000d / (100d - discount)) / 100d;
+            p.setOriginalPrice(originalPrice);
+        } else {
+            p.setOriginalPrice(price);
+        }
         p.setCategory(category);
         p.setImage(image);
         p.setDescription(description);

@@ -28,4 +28,10 @@ public class Product {
     private double discount;
 
     private boolean isPromotional;
+
+    // Remaining quantity for flash-sale pricing
+    private int promotionQuantity = 0;
+
+    // Base price before promotion; used to restore price when promotion ends
+    private Double originalPrice;
 }

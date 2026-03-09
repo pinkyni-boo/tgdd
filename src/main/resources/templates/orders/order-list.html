@@ -57,7 +57,7 @@
                             </span>
                         </div>
                     </td>
-                    <td class="text-danger fw-bold align-middle" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
+                    <td class="text-danger fw-bold align-middle" th:text="${#numbers.formatDecimal(order.totalAmount > 0 ? order.totalAmount : order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
                     <td class="align-middle">
                         <span th:if="${order.loyaltyPointsUsed > 0}" class="text-warning fw-bold" th:text="'-' + ${#numbers.formatDecimal(order.loyaltyPointsUsed, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
                         <span th:if="${order.loyaltyPointsUsed == 0}" class="text-muted">—</span>

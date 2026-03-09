@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Tra cuu diem va voucher</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-toolbar">
+                <div class="admin-title-block">
+                    <h3 class="admin-title">
+                        <i class="fa-solid fa-gift"></i>
+                        Tra cuu diem va voucher
+                    </h3>
+                    <p class="admin-subtitle">Nhap so dien thoai de xem diem, don hang va doi voucher</p>
+                </div>
+            </div>
+
+            <div th:if="${message}" class="alert alert-success admin-alert" role="alert" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger admin-alert" role="alert" th:text="${error}"></div>
+
+            <form class="row g-2 align-items-center mb-3" method="get" th:action="@{/loyalty}">
+                <input type="hidden" name="tab" th:value="${activeTab}">
+                <div class="col-md-8">
+                    <input type="text" name="phone" class="form-control" placeholder="Nhap so dien thoai"
+                           th:value="${lookupPhone}" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="admin-btn admin-btn--accent w-100">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Tra cuu
+                    </button>
+                </div>
+            </form>
+
+            <div class="d-flex gap-2 mb-3">
+                <a th:href="@{/loyalty(phone=${lookupPhone},tab='lookup')}"
+                   class="admin-btn"
+                   th:classappend="${activeTab == 'lookup'} ? ' admin-btn--accent' : ' admin-btn--outline'">
+                    <i class="fa-solid fa-address-card"></i>
+                    Tab tra cuu
+                </a>
+                <a th:href="@{/loyalty(phone=${lookupPhone},tab='redeem')}"
+                   class="admin-btn"
+                   th:classappend="${activeTab == 'redeem'} ? ' admin-btn--accent' : ' admin-btn--outline'">
+                    <i class="fa-solid fa-ticket"></i>
+                    Tab doi voucher
+                </a>
+            </div>
+
+            <div th:if="${notFound}" class="admin-empty">
+                <p>Khong tim thay khach hang voi so dien thoai nay.</p>
+            </div>
+
+            <div th:if="${activeTab == 'lookup'}">
+                <div th:if="${customer != null}">
+                    <div class="admin-stat-row">
+                        <div class="admin-stat-chip">
+                            <i class="fa-solid fa-user"></i>
+                            Khach hang:
+                            <strong th:text="${customer.customerName}">Customer</strong>
+                        </div>
+                        <div class="admin-stat-chip admin-stat-chip--warn">
+                            <i class="fa-solid fa-star"></i>
+                            Diem hien co:
+                            <strong th:text="${#numbers.formatDecimal(customer.loyaltyPoints,0,'COMMA',0,'POINT')}">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-table-card mb-3">
+                    <div class="p-3 border-bottom">
+                        <strong>Don hang da dat</strong>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table admin-table align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ngay tao</th>
+                                <th>Tong tien</th>
+                                <th>Trang thai</th>
+                                <th>Thanh toan</th>
+                                <th>Chi tiet</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${orders == null or #lists.isEmpty(orders)}">
+                                <td colspan="6" class="text-center text-muted">Chua co don hang</td>
+                            </tr>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="${order.id}">1</td>
+                                <td th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                                <td class="admin-price"
+                                    th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                                <td th:text="${order.status}">PENDING</td>
+                                <td th:text="${order.paymentStatus}">UNPAID</td>
+                                <td>
+                                    <a th:if="${lookupPhone != null and !#strings.isEmpty(lookupPhone)}"
+                                       th:href="@{/order/history/detail/{id}(id=${order.id},phone=${lookupPhone},source='loyalty')}"
+                                       class="admin-row-btn admin-row-btn--edit">
+                                        <i class="fa-solid fa-eye"></i>
+                                        Xem
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-table-card mb-3">
+                    <div class="p-3 border-bottom">
+                        <strong>Voucher da doi</strong>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table admin-table align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Ten voucher</th>
+                                <th>Giam gia</th>
+                                <th>Trang thai</th>
+                                <th>Ngay doi</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${customerVouchers == null or #lists.isEmpty(customerVouchers)}">
+                                <td colspan="5" class="text-center text-muted">Chua co voucher</td>
+                            </tr>
+                            <tr th:each="cv : ${customerVouchers}">
+                                <td th:text="${cv.voucher.code}">CODE</td>
+                                <td th:text="${cv.voucher.name}">Voucher</td>
+                                <td th:text="${#numbers.formatDecimal(cv.voucher.discountAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                                <td>
+                                    <span class="admin-tag"
+                                          th:classappend="${cv.status == 'UNUSED'} ? ' admin-tag--success' : ' admin-tag--muted'"
+                                          th:text="${cv.status}">UNUSED</span>
+                                </td>
+                                <td th:text="${cv.redeemedAt != null ? #temporals.format(cv.redeemedAt, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${activeTab == 'redeem'}">
+                <div th:if="${customer == null}" class="admin-empty">
+                    <p>Nhap so dien thoai hop le de doi voucher.</p>
+                </div>
+
+                <div th:if="${customer != null}" class="admin-stat-row">
+                    <div class="admin-stat-chip admin-stat-chip--warn">
+                        <i class="fa-solid fa-star"></i>
+                        Diem hien co:
+                        <strong th:text="${#numbers.formatDecimal(customer.loyaltyPoints,0,'COMMA',0,'POINT')}">0</strong>
+                    </div>
+                    <div class="admin-stat-chip">
+                        <i class="fa-solid fa-phone"></i>
+                        SDT:
+                        <strong th:text="${lookupPhone}">0</strong>
+                    </div>
+                </div>
+
+                <div class="admin-table-card">
+                    <div class="p-3 border-bottom">
+                        <strong>Doi voucher bang diem</strong>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table admin-table align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Ten voucher</th>
+                                <th>Diem can</th>
+                                <th>Giam gia</th>
+                                <th>Thao tac</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${redeemableVouchers == null or #lists.isEmpty(redeemableVouchers)}">
+                                <td colspan="5" class="text-center text-muted">Chua co voucher de doi</td>
+                            </tr>
+                            <tr th:each="voucher : ${redeemableVouchers}">
+                                <td th:text="${voucher.code}">CODE</td>
+                                <td th:text="${voucher.name}">Voucher</td>
+                                <td th:text="${#numbers.formatDecimal(voucher.pointsRequired,0,'COMMA',0,'POINT')}">0</td>
+                                <td th:text="${#numbers.formatDecimal(voucher.discountAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                                <td>
+                                    <form method="post" th:action="@{/loyalty/redeem}" class="d-inline">
+                                        <input type="hidden" name="phone" th:value="${lookupPhone}">
+                                        <input type="hidden" name="voucherId" th:value="${voucher.id}">
+                                        <button type="submit" class="admin-row-btn admin-row-btn--edit">Doi voucher</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

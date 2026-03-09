@@ -3,92 +3,79 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Giỏ Hàng</title>
+    <title>Gio hang</title>
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="cart-page-wrap">
+    <div class="cart-page-wrap cart-page-wrap--modern">
 
-        <!-- ========== EMPTY CART ========== -->
         <div th:if="${cartItems.isEmpty()}" class="cart-body cart-body--empty">
             <div class="cart-empty">
                 <div class="cart-empty__icon"></div>
-                <h2 class="cart-empty__title">Giỏ hàng trống</h2>
-                <p class="cart-empty__subtitle">Không có sản phẩm nào trong giỏ hàng</p>
-                <a href="/" class="btn-backhome">Về trang chủ</a>
-                <p class="cart-empty__hotline">Khi cần trợ giúp vui lòng gọi <strong>1900 232 460</strong> hoặc <strong>028.3622.1060</strong> (8h00 - 21h30)</p>
+                <h2 class="cart-empty__title">Gio hang trong</h2>
+                <p class="cart-empty__subtitle">Khong co san pham nao trong gio hang</p>
+                <a href="/" class="btn-backhome">Ve trang chu</a>
+                <p class="cart-empty__hotline">
+                    Khi can tro giup vui long goi <strong>1900 232 460</strong> hoac <strong>028.3622.1060</strong> (8h00 - 21h30)
+                </p>
             </div>
         </div>
 
-        <!-- ========== CART WITH ITEMS ========== -->
         <div th:unless="${cartItems.isEmpty()}">
             <div class="cart-body">
                 <div class="middleCart">
-                    <!-- Cart header -->
                     <div class="cart-top-content">
                         <a href="/" class="cart-back">
                             <i></i>
-                            <span class="cart-title">Giỏ hàng
-                                <span class="cart-count" th:text="'(' + ${cartItems.size()} + ' sản phẩm)'"></span>
+                            <span class="cart-title">
+                                Gio hang <span class="cart-count" th:text="'(' + ${cartItems.size()} + ' san pham)'"></span>
                             </span>
                         </a>
                         <a href="/cart/clear" class="cart-clear"
-                           onclick="return confirm('Bạn có chắc muốn xóa hết giỏ hàng?');">Xóa tất cả</a>
+                           onclick="return confirm('Ban co chac muon xoa het gio hang?');">Xoa tat ca</a>
                     </div>
 
-                    <!-- Product list -->
                     <div class="cart-product-list">
                         <div th:each="item : ${cartItems}" class="cart-product-item">
                             <div class="cart-product-item-info">
-                                <!-- Product image -->
                                 <a th:href="@{'/products/' + ${item.product.id}}" class="cart-product-item__image">
                                     <img th:if="${item.product.image != null}"
                                          th:src="${item.product.image.startsWith('http') ? item.product.image : '/product-images/' + item.product.image}"
                                          th:alt="${item.product.name}">
                                 </a>
-                                <!-- Right side: name, price, qty -->
+
                                 <div class="cart-product-item__right">
                                     <div class="cart-product-item__right-info">
-                                        <!-- Product name -->
                                         <a th:href="@{'/products/' + ${item.product.id}}"
                                            class="cart-product-item__name"
-                                           th:text="${item.product.name}">Tên sản phẩm</a>
-                                        <!-- Prices -->
+                                           th:text="${item.product.name}">Ten san pham</a>
                                         <div class="cart-product-item__right-info__price">
                                             <strong class="cart-price-original"
-                                                    th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</strong>
+                                                    th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</strong>
                                             <span class="cart-price-discount"
                                                   th:if="${item.product.discount > 0}"
-                                                  th:text="${#numbers.formatDecimal(item.product.price * (100 + item.product.discount) / 100, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+                                                  th:text="${#numbers.formatDecimal(item.product.price * (100 + item.product.discount) / 100, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
                                         </div>
                                     </div>
 
-                                    <!-- Discount tag -->
                                     <div th:if="${item.product.discount > 0}" class="cart-discount-tag">
-                                        Giảm <span class="discount-percent"
+                                        Giam <span class="discount-percent"
                                                     th:text="${#numbers.formatDecimal(item.product.discount, 1, 'COMMA', 0, 'POINT')} + '%'"></span>
                                     </div>
 
-                                    <!-- Quantity controls -->
                                     <div class="cart-product-quantity">
-                                        <!-- Remove link -->
                                         <a th:href="@{/cart/remove/{id}(id=${item.product.id})}"
-                                           class="cart-product-quantity__remove">Xóa</a>
+                                           class="cart-product-quantity__remove">Xoa</a>
 
                                         <div class="cart-product-quantity__btn">
-                                            <!-- Minus button -->
                                             <form th:action="@{/cart/update}" method="post" style="margin:0">
                                                 <input type="hidden" name="productId" th:value="${item.product.id}">
                                                 <input type="hidden" name="quantity" th:value="${item.quantity - 1}">
-                                                <button type="submit" class="cart-qty-minus"
-                                                        th:disabled="${item.quantity <= 1}">&#8722;</button>
+                                                <button type="submit" class="cart-qty-minus" th:disabled="${item.quantity <= 1}">&#8722;</button>
                                             </form>
 
-                                            <!-- Quantity display -->
-                                            <input type="text" class="cart-qty-input" readonly
-                                                   th:value="${item.quantity}">
+                                            <input type="text" class="cart-qty-input" readonly th:value="${item.quantity}">
 
-                                            <!-- Plus button -->
                                             <form th:action="@{/cart/update}" method="post" style="margin:0">
                                                 <input type="hidden" name="productId" th:value="${item.product.id}">
                                                 <input type="hidden" name="quantity" th:value="${item.quantity + 1}">
@@ -101,30 +88,36 @@
                         </div>
                     </div>
 
-                    <!-- Total area -->
                     <div class="cart-area-total">
                         <div class="cart-total-provisional">
-                            <span class="cart-total-label">Tạm tính</span>
+                            <span class="cart-total-label">Tam tinh</span>
                             <span class="cart-total-value"
-                                  th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+                                  th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                        <div class="cart-total-provisional">
+                            <span class="cart-total-label">Phi giao hang</span>
+                            <span class="cart-total-value"
+                                  th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
                         <div class="cart-total-price">
-                            <span class="cart-total-label">Tổng tiền</span>
+                            <span class="cart-total-label">Tong tien</span>
                             <span class="cart-total-value"
-                                  th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+                                  th:text="${#numbers.formatDecimal(payableAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
+                    </div>
+                    <div class="cart-benefit">
+                        <i class="fa-solid fa-shield-heart"></i>
+                        <span>Freeship khi tong so luong san pham tu 2 va tam tinh tu 1.000.000đ</span>
                     </div>
                 </div>
 
-                <!-- Checkout button -->
                 <div class="cart-finaltotal">
-                    <a href="/order/checkout" class="cart-btn-checkout">
-                        Tiến hành đặt hàng
-                    </a>
+                    <a href="/order/checkout" class="cart-btn-checkout">Tien hanh dat hang</a>
+                    <div style="text-align:center; margin-top:10px;">
+                        <a href="/loyalty" class="cart-continue-shopping">Tra cuu don hang, diem va voucher</a>
+                    </div>
                     <div style="text-align:center; margin-top:12px;">
-                        <a href="/" class="cart-continue-shopping">
-                            &#8592; Tiếp tục mua hàng
-                        </a>
+                        <a href="/" class="cart-continue-shopping">&#8592; Tiep tuc mua hang</a>
                     </div>
                 </div>
             </div>

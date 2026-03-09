@@ -64,4 +64,21 @@ public class CartService {
                 .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
     }
+
+    public int getTotalQuantity() {
+        return cartItems.stream().mapToInt(CartItem::getQuantity).sum();
+    }
+
+    public double calculateShippingFee() {
+        double subtotal = getTotalAmount();
+        int totalQty = getTotalQuantity();
+        if (totalQty >= 2 && subtotal >= 1_000_000d) {
+            return 0d;
+        }
+        return cartItems.isEmpty() ? 0d : 30_000d;
+    }
+
+    public double getPayableAmount() {
+        return getTotalAmount() + calculateShippingFee();
+    }
 }

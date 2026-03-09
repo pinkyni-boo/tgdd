@@ -27,7 +27,7 @@ public class ProductService {
 
     // Retrieve promotional products (isPromotional = true)
     public List<Product> getPromotionalProducts() {
-        return productRepository.findByIsPromotionalTrue();
+        return productRepository.findByIsPromotionalTrueAndPromotionQuantityGreaterThan(0);
     }
 
     // Retrieve products by category
@@ -54,6 +54,7 @@ public class ProductService {
             product.setImage("https://placehold.co/600x600/png?text=" + encodedName);
         }
         
+        normalizePromotionFields(product, null);
         return productRepository.save(product);
     }
 
@@ -67,6 +68,8 @@ public class ProductService {
         existingProduct.setCategory(product.getCategory());
         existingProduct.setDiscount(product.getDiscount());
         existingProduct.setPromotional(product.isPromotional()); // Update flag
+        existingProduct.setPromotionQuantity(product.getPromotionQuantity());
+        existingProduct.setOriginalPrice(product.getOriginalPrice());
         
         if (imageFile != null && !imageFile.isEmpty()) {
              String newImageFile = saveImage(imageFile);
@@ -83,6 +86,7 @@ public class ProductService {
              existingProduct.setImage("https://placehold.co/600x600/png?text=" + encodedName);
         }
 
+        normalizePromotionFields(existingProduct, product);
         return productRepository.save(existingProduct);
     }
 
@@ -134,6 +138,69 @@ public class ProductService {
                 productRepository.save(p);
             }
         }
+    }
+
+    @Transactional
+    public void consumePromotionQuantity(Product product, int orderedQty) {
+        if (product == null || orderedQty <= 0) return;
+        Product managedProduct = productRepository.findById(product.getId()).orElse(null);
+        if (managedProduct == null) return;
+        if (!managedProduct.isPromotional() || managedProduct.getDiscount() <= 0) return;
+
+        int remain = Math.max(0, managedProduct.getPromotionQuantity() - orderedQty);
+        managedProduct.setPromotionQuantity(remain);
+
+        if (remain == 0) {
+            double basePrice = resolveBasePrice(managedProduct);
+            managedProduct.setPrice(basePrice);
+            managedProduct.setDiscount(0);
+            managedProduct.setPromotional(false);
+        }
+
+        productRepository.save(managedProduct);
+    }
+
+    private void normalizePromotionFields(Product target, Product sourceInput) {
+        if (target == null) return;
+
+        if (!target.isPromotional() || target.getDiscount() <= 0) {
+            target.setPromotional(false);
+            target.setDiscount(0);
+            target.setPromotionQuantity(0);
+
+            if (sourceInput != null && sourceInput.getPrice() > 0) {
+                target.setPrice(sourceInput.getPrice());
+                target.setOriginalPrice(sourceInput.getPrice());
+            } else if (target.getOriginalPrice() == null || target.getOriginalPrice() <= 0) {
+                target.setOriginalPrice(target.getPrice());
+            } else {
+                target.setPrice(target.getOriginalPrice());
+            }
+            return;
+        }
+
+        if (target.getPromotionQuantity() < 0) {
+            target.setPromotionQuantity(0);
+        }
+
+        if (target.getOriginalPrice() == null || target.getOriginalPrice() <= 0) {
+            if (sourceInput != null && sourceInput.getOriginalPrice() != null && sourceInput.getOriginalPrice() > 0) {
+                target.setOriginalPrice(sourceInput.getOriginalPrice());
+            } else {
+                target.setOriginalPrice(resolveBasePrice(target));
+            }
+        }
+    }
+
+    private double resolveBasePrice(Product product) {
+        if (product.getOriginalPrice() != null && product.getOriginalPrice() > 0) {
+            return product.getOriginalPrice();
+        }
+
+        if (product.getDiscount() > 0 && product.getDiscount() < 100) {
+            return Math.round(product.getPrice() * 10000d / (100d - product.getDiscount())) / 100d;
+        }
+        return product.getPrice();
     }
 
     // --- BỘ MÁY TỰ ĐỘNG GẮN ẢNH (SMART AUTO IMAGE) ---

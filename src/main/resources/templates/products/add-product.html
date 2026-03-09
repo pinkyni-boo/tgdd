@@ -31,6 +31,14 @@
                             <label for="discount" class="form-label">Giảm giá (%):</label>
                             <input type="number" step="1" min="0" max="100" th:field="*{discount}" class="form-control" id="discount" placeholder="VD: 20">
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="promotionQuantity" class="form-label">Số lượng khuyến mãi:</label>
+                            <input type="number" min="0" th:field="*{promotionQuantity}" class="form-control" id="promotionQuantity" placeholder="VD: 20">
+                            <div class="form-text">Khi về 0, sản phẩm sẽ tự hết khuyến mãi và về giá gốc.</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6 mb-3 d-flex align-items-center">
                             <div class="form-check mt-3">
                                 <input type="checkbox" class="form-check-input" id="isPromotional" th:field="*{promotional}">

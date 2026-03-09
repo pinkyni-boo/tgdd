@@ -1,7 +1,12 @@
 package com.hutech.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -19,11 +24,24 @@ public class Order {
     private String phone;
     private String address;
     private String payment;
-    private String status = "PENDING"; // PENDING, CONFIRMED, SHIPPED, COMPLETED
+    // PENDING, CONFIRMED, SHIPPED, COMPLETED
+    private String status = "PENDING";
+    // UNPAID, PAID, FAILED
+    private String paymentStatus = "UNPAID";
 
-    private double totalAmount;          // tổng tiền đơn hàng (sau khi trừ tích lũy)
-    private long loyaltyPointsUsed;      // điểm tích lũy đã dùng
-    private long loyaltyPointsEarned;    // điểm tích lũy được từ đơn này
+    private double subtotalAmount;
+    private double shippingFee;
+    private double voucherDiscount;
+    private String voucherCodeUsed;
+    // Final payable amount
+    private double totalAmount;
+
+    // Loyalty accounting
+    private long loyaltyPointsUsed;
+    private long loyaltyPointsEarned;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
@@ -31,7 +49,19 @@ public class Order {
     public double getTotalPrice() {
         if (orderDetails == null) return 0;
         return orderDetails.stream()
-                .mapToDouble(detail -> detail.getQuantity() * detail.getProduct().getPrice())
+                .mapToDouble(detail -> detail.getQuantity() * detail.getUnitPrice())
                 .sum();
+    }
+
+    @PrePersist
+    public void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

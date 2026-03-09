@@ -19,6 +19,9 @@ public class CartController {
     public String showCart(Model model) {
         model.addAttribute("cartItems", cartService.getCartItems());
         model.addAttribute("totalAmount", cartService.getTotalAmount());
+        model.addAttribute("shippingFee", cartService.calculateShippingFee());
+        model.addAttribute("payableAmount", cartService.getPayableAmount());
+        model.addAttribute("totalQuantity", cartService.getTotalQuantity());
         model.addAttribute("hideFooter", true);
         return "cart/cart";
     }
@@ -71,13 +74,23 @@ public class CartController {
     @ResponseBody
     public Map<String, Object> apiUpdateCart(@RequestParam Long productId, @RequestParam int quantity) {
         cartService.updateQuantity(productId, quantity);
-        return Map.of("totalAmount", cartService.getTotalAmount(), "itemCount", cartService.getCartItems().size());
+        return Map.of(
+                "subtotalAmount", cartService.getTotalAmount(),
+                "shippingFee", cartService.calculateShippingFee(),
+                "payableAmount", cartService.getPayableAmount(),
+                "totalQuantity", cartService.getTotalQuantity(),
+                "itemCount", cartService.getCartItems().size());
     }
 
     @PostMapping("/api/remove")
     @ResponseBody
     public Map<String, Object> apiRemoveFromCart(@RequestParam Long productId) {
         cartService.removeFromCart(productId);
-        return Map.of("totalAmount", cartService.getTotalAmount(), "itemCount", cartService.getCartItems().size());
+        return Map.of(
+                "subtotalAmount", cartService.getTotalAmount(),
+                "shippingFee", cartService.calculateShippingFee(),
+                "payableAmount", cartService.getPayableAmount(),
+                "totalQuantity", cartService.getTotalQuantity(),
+                "itemCount", cartService.getCartItems().size());
     }
 }

@@ -3,118 +3,109 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Chi Tiết Đơn Hàng</title>
+    <title>Chi tiet don hang</title>
 </head>
 <body>
 <section layout:fragment="content">
-<div class="main-container admin-page">
-    
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 p-4 bg-white rounded shadow-sm">
-        <div>
-             <h4 class="mb-1 fw-bold">Chi Tiết Đơn Hàng <span class="text-primary">#DH-[[${order.id}]]</span></h4>
-             <p class="mb-0 text-muted small">Ngày đặt: <span class="fw-bold">Vừa xong</span></p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="/orders" class="btn btn-outline-secondary rounded-pill px-3">
-                <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
-            </a>
-            <!-- Status Actions -->
-            <form th:if="${order.status == 'PENDING' or order.status == null}" th:action="@{/orders/confirm/{id}(id=${order.id})}" method="post">
-                 <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">
-                     <i class="fa-solid fa-check me-1"></i> XÁC NHẬN ĐƠN
-                 </button>
-            </form>
-            <button th:if="${order.status == 'CONFIRMED'}" class="btn btn-success rounded-pill px-4" disabled>
-                <i class="fa-solid fa-check-double me-1"></i> ĐÃ XỬ LÝ
-            </button>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- LEFT: Order Info -->
-        <div class="col-lg-8">
-            <div class="modern-card p-0 overflow-hidden mb-4">
-                <div class="bg-warning bg-opacity-10 p-3 border-bottom border-warning border-opacity-25">
-                    <h6 class="mb-0 fw-bold text-dark text-uppercase">Danh sách sản phẩm</h6>
+    <div class="admin-page-wrap">
+        <div class="admin-shell">
+            <div class="admin-toolbar">
+                <div class="admin-title-block">
+                    <h3 class="admin-title">
+                        <i class="fa-solid fa-receipt"></i>
+                        Chi tiet don #DH-<span th:text="${order.id}">1</span>
+                    </h3>
+                    <p class="admin-subtitle">
+                        Ngay tao:
+                        <span th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm') : '-'}">-</span>
+                    </p>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="bg-light small text-muted">
-                        <tr>
-                            <th class="ps-4">Sản Phẩm</th>
-                            <th class="text-center">Số Lượng</th>
-                            <th class="text-end">Đơn Giá</th>
-                            <th class="text-end pe-4">Thành Tiền</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="detail : ${order.orderDetails}">
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center gap-3">
-                                    <img th:if="${detail.product.image != null}" 
-                                         th:src="${detail.product.image.startsWith('http') ? detail.product.image : '/product-images/' + detail.product.image}"
-                                         width="48" height="48" class="rounded border bg-white" style="object-fit: cover;">
-                                    <span class="fw-bold text-dark" th:text="${detail.product.name}">Product Name</span>
-                                </div>
-                            </td>
-                            <td class="text-center align-middle" th:text="${detail.quantity}">1</td>
-                            <td class="text-end align-middle text-muted" th:text="${#numbers.formatDecimal(detail.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
-                            <td class="text-end pe-4 align-middle fw-bold" th:text="${#numbers.formatDecimal(detail.product.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
-                        </tr>
-                        </tbody>
-                        <tfoot class="bg-light">
-                            <tr th:if="${order.loyaltyPointsUsed > 0}">
-                                <td colspan="3" class="text-end fw-bold pt-2 pb-2">Điểm tích lũy đã dùng:</td>
-                                <td class="text-end pe-4 text-warning fw-bold pt-2 pb-2" th:text="'-' + ${#numbers.formatDecimal(order.loyaltyPointsUsed, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="text-end fw-bold pt-3 pb-3">Tổng Cộng:</td>
-                                <td class="text-end pe-4 text-danger fw-bold fs-5 pt-3 pb-3" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
-                            </tr>
-                            <tr th:if="${order.loyaltyPointsEarned > 0}">
-                                <td colspan="3" class="text-end pt-2 pb-2">Điểm tích lũy được:</td>
-                                <td class="text-end pe-4 text-success fw-bold pt-2 pb-2" th:text="'+' + ${#numbers.formatDecimal(order.loyaltyPointsEarned, 0, 'COMMA', 0, 'POINT')} + ' điểm'"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                <div class="admin-actions">
+                    <a th:if="${isLookupView == true and backPhone != null and backToLoyalty == true}"
+                       th:href="@{/loyalty(phone=${backPhone})}"
+                       class="admin-btn admin-btn--muted">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Quay lai tra cuu
+                    </a>
+                    <a th:if="${isLookupView == true and backToLoyalty != true}" th:href="@{/order/history}" class="admin-btn admin-btn--muted">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Quay lai tra cuu
+                    </a>
+                    <a th:unless="${isLookupView == true}" href="/orders" class="admin-btn admin-btn--muted">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Quay lai danh sach
+                    </a>
+                    <form th:if="${(order.status == 'PENDING' or order.status == null) and isLookupView != true}"
+                          th:action="@{/orders/confirm/{id}(id=${order.id})}" method="post" class="d-inline">
+                        <button type="submit" class="admin-btn admin-btn--accent">
+                            <i class="fa-solid fa-check"></i>
+                            Xac nhan don
+                        </button>
+                    </form>
                 </div>
             </div>
-        </div>
 
-        <!-- RIGHT: Customer Info -->
-        <div class="col-lg-4">
-            <div class="modern-card p-4 mb-4">
-                <h6 class="fw-bold mb-3 border-bottom pb-2">Thông Tin Khách Hàng</h6>
-                
-                <div class="mb-3">
-                    <label class="small text-muted d-block">Họ và Tên</label>
-                    <span class="fw-bold" th:text="${order.customerName}">Nguyễn Văn A</span>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="small text-muted d-block">Trạng Thái Đơn</label>
-                    <span class="badge" 
-                          th:classappend="${order.status == 'PENDING' ? 'bg-warning text-dark' : 'bg-success'}"
-                          th:text="${order.status == 'PENDING' ? 'Chờ xác nhận' : 'Đã hoàn thành'}">
-                        Pending
-                    </span>
+            <div class="row g-3">
+                <div class="col-lg-8">
+                    <div class="admin-table-card">
+                        <div class="table-responsive">
+                            <table class="table admin-table align-middle mb-0">
+                                <thead>
+                                <tr>
+                                    <th>San pham</th>
+                                    <th>So luong</th>
+                                    <th>Don gia</th>
+                                    <th>Thanh tien</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="detail : ${order.orderDetails}">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img th:if="${detail.product != null and detail.product.image != null}"
+                                                 th:src="${detail.product.image.startsWith('http') ? detail.product.image : '/product-images/' + detail.product.image}"
+                                                 width="48" height="48" class="admin-thumb" style="width:48px;height:48px;">
+                                            <span th:text="${detail.product != null ? detail.product.name : 'San pham'}">San pham</span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${detail.quantity}">1</td>
+                                    <td th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                                    <td class="admin-price"
+                                        th:text="${#numbers.formatDecimal(detail.unitPrice * detail.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                        0đ
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="small text-muted d-block">Phương thức thanh toán</label>
-                    <span class="fw-bold"><i class="fa-solid fa-money-bill-wave text-success me-1"></i> COD</span>
+                <div class="col-lg-4">
+                    <div class="admin-table-card p-3">
+                        <p class="mb-2"><strong>Khach hang:</strong> <span th:text="${order.customerName}">Name</span></p>
+                        <p class="mb-2"><strong>SDT:</strong> <span th:text="${order.phone != null and !#strings.isEmpty(order.phone) ? order.phone : '-'}">-</span></p>
+                        <p class="mb-2"><strong>Dia chi:</strong> <span th:text="${order.address != null and !#strings.isEmpty(order.address) ? order.address : '-'}">-</span></p>
+                        <p class="mb-2"><strong>Thanh toan:</strong> <span th:text="${order.payment}">COD</span></p>
+                        <p class="mb-2"><strong>Trang thai don:</strong> <span th:text="${order.status}">PENDING</span></p>
+                        <p class="mb-2"><strong>Trang thai thanh toan:</strong> <span th:text="${order.paymentStatus}">UNPAID</span></p>
+                        <hr>
+                        <p class="mb-2"><strong>Tam tinh:</strong> <span th:text="${#numbers.formatDecimal(order.subtotalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span></p>
+                        <p class="mb-2"><strong>Phi giao hang:</strong> <span th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span></p>
+                        <p class="mb-2"><strong>Giam voucher:</strong> <span th:text="${'-' + #numbers.formatDecimal(order.voucherDiscount, 0, 'COMMA', 0, 'POINT') + 'đ'}">-0đ</span></p>
+                        <p class="mb-2" th:if="${order.loyaltyPointsUsed > 0}">
+                            <strong>Giam diem:</strong>
+                            <span th:text="${'-' + #numbers.formatDecimal(order.loyaltyPointsUsed, 0, 'COMMA', 0, 'POINT') + 'đ'}">-0đ</span>
+                        </p>
+                        <p class="mb-0 admin-price">
+                            <strong>Tong thanh toan:</strong>
+                            <span th:text="${#numbers.formatDecimal(order.totalAmount > 0 ? order.totalAmount : order.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        </p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="modern-card p-4 text-center">
-                <i class="fa-solid fa-headset fa-3x text-muted mb-3 opacity-25"></i>
-                <p class="small text-muted mb-0">Cần hỗ trợ? Liên hệ IT Support.</p>
             </div>
         </div>
     </div>
-
-</div>
 </section>
 </body>
 </html>
