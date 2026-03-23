@@ -19,6 +19,9 @@ public class CartService {
     private ProductRepository productRepository;
 
     public void addToCart(Long productId, int quantity) {
+        if (quantity <= 0) {
+            quantity = 1;
+        }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
                 
@@ -34,7 +37,7 @@ public class CartService {
     }
 
     public void updateQuantity(Long productId, int quantity) {
-        for (CartItem item : cartItems) {
+        for (CartItem item : new ArrayList<>(cartItems)) {
             if (item.getProduct().getId().equals(productId)) {
                 if (quantity <= 0) {
                     cartItems.remove(item);
@@ -47,6 +50,7 @@ public class CartService {
     }
 
     public List<CartItem> getCartItems() {
+        cartItems.removeIf(item -> item == null || item.getProduct() == null || item.getQuantity() <= 0);
         return cartItems;
     }
 

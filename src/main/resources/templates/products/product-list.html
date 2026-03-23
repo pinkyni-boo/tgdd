@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
@@ -15,18 +16,19 @@
                         <i class="fa-solid fa-box-open"></i>
                         Qu&#7843;n L&#253; S&#7843;n Ph&#7849;m
                     </h3>
-                    <p class="admin-subtitle">Trang d&#224;nh cho Admin</p>
+                    <p class="admin-subtitle">Admin va Manager duoc phep quan ly san pham.</p>
                 </div>
                 <div class="admin-actions">
-                    <a th:href="@{/admin}" class="admin-btn admin-btn--muted">
+                    <a th:href="@{/admin}" class="admin-btn admin-btn--muted" sec:authorize="hasAuthority('ADMIN')">
                         <i class="fa-solid fa-arrow-left"></i>
                         Trang Ch&#7911; Qu&#7843;n L&#253;
                     </a>
-                    <a th:href="@{/categories}" class="admin-btn admin-btn--outline">
+                    <a th:href="@{/categories}" class="admin-btn admin-btn--outline" sec:authorize="hasAuthority('ADMIN')">
                         <i class="fa-solid fa-layer-group"></i>
                         Qu&#7843;n L&#253; Danh M&#7909;c
                     </a>
-                    <a th:href="@{/products/add}" class="admin-btn admin-btn--accent">
+                    <a th:href="@{/products/add}" class="admin-btn admin-btn--accent"
+                       sec:authorize="hasAnyAuthority('ADMIN','MANAGER')">
                         <i class="fa-solid fa-plus-circle"></i>
                         Th&#234;m S&#7843;n Ph&#7849;m
                     </a>
@@ -89,18 +91,21 @@
                             </td>
                             <td class="admin-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">20,000,000 VND</td>
                             <td>
-                                <span class="admin-tag" th:if="${product.category != null}" th:text="${product.category.name}">Phone</span>
+                                <span class="admin-tag" th:if="${product.category != null}" th:text="${product.category.name}">Điện thoại</span>
                                 <span class="admin-tag admin-tag--muted" th:unless="${product.category != null}">Ch&#432;a ph&#226;n lo&#7841;i</span>
                             </td>
                             <td>
                                 <div class="admin-row-actions">
-                                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="admin-row-btn admin-row-btn--edit" title="S&#7917;a">
+                                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="admin-row-btn admin-row-btn--edit"
+                                       title="S&#7917;a"
+                                       sec:authorize="hasAnyAuthority('ADMIN','MANAGER')">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         S&#7917;a
                                     </a>
                                     <a th:href="@{/products/delete/{id}(id=${product.id})}"
                                        class="admin-row-btn admin-row-btn--delete"
                                        title="X&#243;a"
+                                       sec:authorize="hasAuthority('ADMIN')"
                                        onclick="return confirm('B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a?');">
                                         <i class="fa-solid fa-trash"></i>
                                         X&#243;a

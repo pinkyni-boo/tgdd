@@ -77,14 +77,14 @@
                                 </td>
                                 <td>
                                     <span class="admin-tag"
-                                          th:classappend="${order.status == 'PENDING'} ? ' admin-tag--muted' : ' admin-tag--success'"
+                                          th:classappend="${order.status == 'PENDING' ? ' admin-tag--muted' : ' admin-tag--success'}"
                                           th:text="${order.status != null ? order.status : 'PENDING'}">
                                         PENDING
                                     </span>
                                 </td>
                                 <td>
                                     <span class="admin-tag"
-                                          th:classappend="${order.paymentStatus == 'PAID'} ? ' admin-tag--success' : ' admin-tag--muted'"
+                                          th:classappend="${order.paymentStatus == 'PAID' ? ' admin-tag--success' : ' admin-tag--muted'}"
                                           th:text="${order.paymentStatus != null ? order.paymentStatus : 'UNPAID'}">
                                         UNPAID
                                     </span>

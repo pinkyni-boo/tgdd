@@ -74,23 +74,27 @@ public class CartController {
     @ResponseBody
     public Map<String, Object> apiUpdateCart(@RequestParam Long productId, @RequestParam int quantity) {
         cartService.updateQuantity(productId, quantity);
+        int lineCount = cartService.getCartItems().size();
+        int totalQuantity = cartService.getTotalQuantity();
         return Map.of(
                 "subtotalAmount", cartService.getTotalAmount(),
                 "shippingFee", cartService.calculateShippingFee(),
                 "payableAmount", cartService.getPayableAmount(),
-                "totalQuantity", cartService.getTotalQuantity(),
-                "itemCount", cartService.getCartItems().size());
+                "totalQuantity", totalQuantity,
+                "itemCount", lineCount);
     }
 
     @PostMapping("/api/remove")
     @ResponseBody
     public Map<String, Object> apiRemoveFromCart(@RequestParam Long productId) {
         cartService.removeFromCart(productId);
+        int lineCount = cartService.getCartItems().size();
+        int totalQuantity = cartService.getTotalQuantity();
         return Map.of(
                 "subtotalAmount", cartService.getTotalAmount(),
                 "shippingFee", cartService.calculateShippingFee(),
                 "payableAmount", cartService.getPayableAmount(),
-                "totalQuantity", cartService.getTotalQuantity(),
-                "itemCount", cartService.getCartItems().size());
+                "totalQuantity", totalQuantity,
+                "itemCount", lineCount);
     }
 }

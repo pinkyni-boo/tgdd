@@ -31,5 +31,8 @@ public class Voucher {
     // Flat discount amount in VND
     private double discountAmount;
 
+    @Column(name = "otp_secret", length = 100)
+    private String otpSecret;
+
     private boolean active = true;
 }

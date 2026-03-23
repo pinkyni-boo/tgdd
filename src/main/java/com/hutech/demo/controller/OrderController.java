@@ -4,9 +4,12 @@ import com.hutech.demo.model.CartItem;
 import com.hutech.demo.model.Order;
 import com.hutech.demo.service.CartService;
 import com.hutech.demo.service.OrderService;
+import com.hutech.demo.service.UserService;
 import com.hutech.demo.service.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +28,7 @@ public class OrderController {
     private final OrderService orderService;
     private final CartService cartService;
     private final VnPayService vnPayService;
+    private final UserService userService;
 
     @GetMapping("/orders") // Admin Route
     public String orderList(Model model) {
@@ -45,7 +49,7 @@ public class OrderController {
     }
 
     @GetMapping("/order/checkout") // Customer Route
-    public String checkout(Model model) {
+    public String checkout(Model model, Authentication authentication) {
         model.addAttribute("cartItems", cartService.getCartItems());
         model.addAttribute("totalAmount", cartService.getTotalAmount());
         model.addAttribute("shippingFee", cartService.calculateShippingFee());
@@ -53,6 +57,11 @@ public class OrderController {
         model.addAttribute("totalQuantity", cartService.getTotalQuantity());
         model.addAttribute("vnpayEnabled", vnPayService.isConfigured());
         model.addAttribute("hideFooter", true);
+        if (isRealAuthenticated(authentication)) {
+            var user = userService.getDomainUserByUsername(authentication.getName());
+            model.addAttribute("loggedPhone", user.getPhone());
+            model.addAttribute("loggedUsername", user.getUsername());
+        }
         return "cart/checkout";
     }
 
@@ -64,11 +73,22 @@ public class OrderController {
                               @RequestParam(value = "vnpayMethod", required = false) String vnpayMethod,
                               @RequestParam(value = "useLoyaltyPoints", defaultValue = "false") boolean useLoyaltyPoints,
                               @RequestParam(value = "voucherCode", required = false) String voucherCode,
+                              Authentication authentication,
                               HttpServletRequest request,
                               RedirectAttributes redirectAttributes) {
         List<CartItem> cartItems = cartService.getCartItems();
         if (cartItems.isEmpty()) {
             return "redirect:/cart";
+        }
+
+        if (isRealAuthenticated(authentication)) {
+            var user = userService.getDomainUserByUsername(authentication.getName());
+            if (user.getPhone() != null && !user.getPhone().isBlank()) {
+                phone = user.getPhone();
+            }
+            if (customerName == null || customerName.isBlank()) {
+                customerName = user.getUsername();
+            }
         }
 
         if (payment == null || payment.isBlank()) {
@@ -104,24 +124,24 @@ public class OrderController {
                                     RedirectAttributes redirectAttributes) {
         Long orderId = parseOrderId(queryParams.get("vnp_TxnRef"));
         if (orderId == null) {
-            redirectAttributes.addFlashAttribute("error", "Cannot identify order from VNPay response.");
+            redirectAttributes.addFlashAttribute("error", "Không xác định được đơn hàng từ phản hồi VNPay.");
             return "redirect:/order/confirmation";
         }
 
         boolean validSignature = vnPayService.verifyReturn(queryParams);
         if (!validSignature) {
             orderService.markPaymentFailed(orderId);
-            redirectAttributes.addFlashAttribute("error", "Invalid VNPay signature.");
+            redirectAttributes.addFlashAttribute("error", "Chữ ký VNPay không hợp lệ.");
             return "redirect:/order/confirmation?orderId=" + orderId;
         }
 
         String responseCode = queryParams.getOrDefault("vnp_ResponseCode", "");
         if ("00".equals(responseCode)) {
             orderService.markAsPaid(orderId);
-            redirectAttributes.addFlashAttribute("message", "VNPay payment successful for order #" + orderId + ".");
+            redirectAttributes.addFlashAttribute("message", "Thanh toán VNPay thành công cho đơn #" + orderId + ".");
         } else {
             orderService.markPaymentFailed(orderId);
-            redirectAttributes.addFlashAttribute("error", "VNPay payment failed (code: " + responseCode + ").");
+            redirectAttributes.addFlashAttribute("error", "Thanh toán VNPay thất bại (mã: " + responseCode + ").");
         }
 
         return "redirect:/order/confirmation?orderId=" + orderId;
@@ -134,7 +154,7 @@ public class OrderController {
             model.addAttribute("order", orderService.getOrderById(orderId));
         }
         if (!model.containsAttribute("message") && !model.containsAttribute("error")) {
-            model.addAttribute("message", "Your order has been created successfully.");
+            model.addAttribute("message", "Đơn hàng của bạn đã được tạo thành công.");
         }
         return "cart/order-confirmation";
     }
@@ -166,7 +186,7 @@ public class OrderController {
                                      RedirectAttributes redirectAttributes) {
         String normalizedPhone = phone == null ? "" : phone.trim();
         if (!normalizedPhone.matches("\\d{9,12}")) {
-            redirectAttributes.addFlashAttribute("error", "Phone number is invalid.");
+            redirectAttributes.addFlashAttribute("error", "Số điện thoại không hợp lệ.");
             return "redirect:/order/history";
         }
 
@@ -177,7 +197,7 @@ public class OrderController {
             model.addAttribute("backToLoyalty", "loyalty".equalsIgnoreCase(source));
             return "orders/order-detail";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Cannot find this order for provided phone.");
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng theo số điện thoại đã nhập.");
             return "redirect:/order/history";
         }
     }
@@ -211,5 +231,11 @@ public class OrderController {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    private boolean isRealAuthenticated(Authentication authentication) {
+        return authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
     }
 }

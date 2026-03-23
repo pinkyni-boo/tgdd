@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Tra cuu diem va voucher</title>
+    <title>Tich diem va doi voucher</title>
 </head>
 <body>
 <section layout:fragment="content">
@@ -13,67 +13,60 @@
                 <div class="admin-title-block">
                     <h3 class="admin-title">
                         <i class="fa-solid fa-gift"></i>
-                        Tra cuu diem va voucher
+                        Trung tam tich diem
                     </h3>
-                    <p class="admin-subtitle">Nhap so dien thoai de xem diem, don hang va doi voucher</p>
+                    <p class="admin-subtitle">Chi USER moi truy cap duoc trang nay.</p>
                 </div>
             </div>
 
             <div th:if="${message}" class="alert alert-success admin-alert" role="alert" th:text="${message}"></div>
             <div th:if="${error}" class="alert alert-danger admin-alert" role="alert" th:text="${error}"></div>
 
-            <form class="row g-2 align-items-center mb-3" method="get" th:action="@{/loyalty}">
-                <input type="hidden" name="tab" th:value="${activeTab}">
-                <div class="col-md-8">
-                    <input type="text" name="phone" class="form-control" placeholder="Nhap so dien thoai"
-                           th:value="${lookupPhone}" required>
+            <div class="admin-stat-row mb-3">
+                <div class="admin-stat-chip">
+                    <i class="fa-solid fa-phone"></i>
+                    So dien thoai:
+                    <strong th:text="${lookupPhone}">0900000000</strong>
                 </div>
-                <div class="col-md-4">
-                    <button type="submit" class="admin-btn admin-btn--accent w-100">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        Tra cuu
-                    </button>
+                <div class="admin-stat-chip admin-tag--success">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Che do OTP:
+                    <strong>MOI VOUCHER MOT OTP RIENG</strong>
                 </div>
-            </form>
+            </div>
 
             <div class="d-flex gap-2 mb-3">
-                <a th:href="@{/loyalty(phone=${lookupPhone},tab='lookup')}"
+                <a th:href="@{/loyalty(tab='lookup')}"
                    class="admin-btn"
                    th:classappend="${activeTab == 'lookup'} ? ' admin-btn--accent' : ' admin-btn--outline'">
                     <i class="fa-solid fa-address-card"></i>
-                    Tab tra cuu
+                    Tra cuu
                 </a>
-                <a th:href="@{/loyalty(phone=${lookupPhone},tab='redeem')}"
+                <a th:href="@{/loyalty(tab='redeem')}"
                    class="admin-btn"
                    th:classappend="${activeTab == 'redeem'} ? ' admin-btn--accent' : ' admin-btn--outline'">
                     <i class="fa-solid fa-ticket"></i>
-                    Tab doi voucher
+                    Doi diem
                 </a>
             </div>
 
-            <div th:if="${notFound}" class="admin-empty">
-                <p>Khong tim thay khach hang voi so dien thoai nay.</p>
-            </div>
-
             <div th:if="${activeTab == 'lookup'}">
-                <div th:if="${customer != null}">
-                    <div class="admin-stat-row">
-                        <div class="admin-stat-chip">
-                            <i class="fa-solid fa-user"></i>
-                            Khach hang:
-                            <strong th:text="${customer.customerName}">Customer</strong>
-                        </div>
-                        <div class="admin-stat-chip admin-stat-chip--warn">
-                            <i class="fa-solid fa-star"></i>
-                            Diem hien co:
-                            <strong th:text="${#numbers.formatDecimal(customer.loyaltyPoints,0,'COMMA',0,'POINT')}">0</strong>
-                        </div>
+                <div class="admin-stat-row">
+                    <div class="admin-stat-chip">
+                        <i class="fa-solid fa-user"></i>
+                        Khach hang:
+                        <strong th:text="${customer.customerName}">Khach hang</strong>
+                    </div>
+                    <div class="admin-stat-chip admin-stat-chip--warn">
+                        <i class="fa-solid fa-star"></i>
+                        Diem hien co:
+                        <strong th:text="${#numbers.formatDecimal(customer.loyaltyPoints,0,'COMMA',0,'POINT')}">0</strong>
                     </div>
                 </div>
 
                 <div class="admin-table-card mb-3">
                     <div class="p-3 border-bottom">
-                        <strong>Don hang da dat</strong>
+                        <strong>Lich su don hang</strong>
                     </div>
                     <div class="table-responsive">
                         <table class="table admin-table align-middle mb-0">
@@ -95,12 +88,11 @@
                                 <td th:text="${order.id}">1</td>
                                 <td th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
                                 <td class="admin-price"
-                                    th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                                    th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'd'">0d</td>
                                 <td th:text="${order.status}">PENDING</td>
                                 <td th:text="${order.paymentStatus}">UNPAID</td>
                                 <td>
-                                    <a th:if="${lookupPhone != null and !#strings.isEmpty(lookupPhone)}"
-                                       th:href="@{/order/history/detail/{id}(id=${order.id},phone=${lookupPhone},source='loyalty')}"
+                                    <a th:href="@{/order/history/detail/{id}(id=${order.id},phone=${lookupPhone},source='loyalty')}"
                                        class="admin-row-btn admin-row-btn--edit">
                                         <i class="fa-solid fa-eye"></i>
                                         Xem
@@ -121,7 +113,7 @@
                             <thead>
                             <tr>
                                 <th>Code</th>
-                                <th>Ten voucher</th>
+                                <th>Ten</th>
                                 <th>Giam gia</th>
                                 <th>Trang thai</th>
                                 <th>Ngay doi</th>
@@ -134,7 +126,7 @@
                             <tr th:each="cv : ${customerVouchers}">
                                 <td th:text="${cv.voucher.code}">CODE</td>
                                 <td th:text="${cv.voucher.name}">Voucher</td>
-                                <td th:text="${#numbers.formatDecimal(cv.voucher.discountAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                                <td th:text="${#numbers.formatDecimal(cv.voucher.discountAmount,0,'COMMA',0,'POINT')} + 'd'">0d</td>
                                 <td>
                                     <span class="admin-tag"
                                           th:classappend="${cv.status == 'UNUSED'} ? ' admin-tag--success' : ' admin-tag--muted'"
@@ -149,26 +141,21 @@
             </div>
 
             <div th:if="${activeTab == 'redeem'}">
-                <div th:if="${customer == null}" class="admin-empty">
-                    <p>Nhap so dien thoai hop le de doi voucher.</p>
-                </div>
-
-                <div th:if="${customer != null}" class="admin-stat-row">
+                <div class="admin-stat-row">
                     <div class="admin-stat-chip admin-stat-chip--warn">
                         <i class="fa-solid fa-star"></i>
                         Diem hien co:
                         <strong th:text="${#numbers.formatDecimal(customer.loyaltyPoints,0,'COMMA',0,'POINT')}">0</strong>
                     </div>
                     <div class="admin-stat-chip">
-                        <i class="fa-solid fa-phone"></i>
-                        SDT:
-                        <strong th:text="${lookupPhone}">0</strong>
+                        <i class="fa-solid fa-circle-info"></i>
+                        Bam Quet QR o voucher nao thi app se tao OTP rieng cho voucher do.
                     </div>
                 </div>
 
                 <div class="admin-table-card">
                     <div class="p-3 border-bottom">
-                        <strong>Doi voucher bang diem</strong>
+                        <strong>Doi voucher bang diem + OTP theo tung voucher</strong>
                     </div>
                     <div class="table-responsive">
                         <table class="table admin-table align-middle mb-0">
@@ -178,7 +165,7 @@
                                 <th>Ten voucher</th>
                                 <th>Diem can</th>
                                 <th>Giam gia</th>
-                                <th>Thao tac</th>
+                                <th>QR OTP + thao tac</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -189,12 +176,19 @@
                                 <td th:text="${voucher.code}">CODE</td>
                                 <td th:text="${voucher.name}">Voucher</td>
                                 <td th:text="${#numbers.formatDecimal(voucher.pointsRequired,0,'COMMA',0,'POINT')}">0</td>
-                                <td th:text="${#numbers.formatDecimal(voucher.discountAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                                <td th:text="${#numbers.formatDecimal(voucher.discountAmount,0,'COMMA',0,'POINT')} + 'd'">0d</td>
                                 <td>
-                                    <form method="post" th:action="@{/loyalty/redeem}" class="d-inline">
-                                        <input type="hidden" name="phone" th:value="${lookupPhone}">
+                                    <form method="post" th:action="@{/loyalty/redeem}" class="d-flex gap-2 align-items-center flex-wrap">
                                         <input type="hidden" name="voucherId" th:value="${voucher.id}">
-                                        <button type="submit" class="admin-row-btn admin-row-btn--edit">Doi voucher</button>
+                                        <button type="button"
+                                                class="admin-row-btn admin-row-btn--edit"
+                                                th:attr="data-voucher-id=${voucher.id},data-voucher-code=${voucher.code}"
+                                                onclick="openVoucherOtpModal(this)">
+                                            Quet QR OTP
+                                        </button>
+                                        <input type="text" name="otpCode" class="form-control" style="max-width:140px"
+                                               placeholder="Nhap OTP 6 so" maxlength="6" required>
+                                        <button type="submit" class="admin-row-btn admin-row-btn--edit">Doi</button>
                                     </form>
                                 </td>
                             </tr>
@@ -202,9 +196,76 @@
                         </table>
                     </div>
                 </div>
+                <p class="mt-3 text-muted mb-0">
+                    Doi thanh cong thi voucher luu ngay vao tai khoan va dung duoc ngay o buoc thanh toan.
+                </p>
             </div>
         </div>
     </div>
+
+    <div id="voucherOtpModal" style="display:none; position:fixed; inset:0; z-index:2500; background:rgba(0,0,0,.55);">
+        <div style="max-width:420px; margin:6vh auto; background:#fff; border-radius:16px; padding:18px; box-shadow:0 16px 48px rgba(0,0,0,.2); position:relative;">
+            <button type="button" onclick="closeVoucherOtpModal()"
+                    style="position:absolute; right:10px; top:8px; border:0; background:transparent; font-size:28px; line-height:1;">&times;</button>
+            <h5 class="mb-1 fw-bold">QR OTP theo voucher</h5>
+            <p id="voucherOtpTitle" class="text-muted mb-3">Dang tai...</p>
+            <div style="text-align:center; min-height:260px; display:flex; align-items:center; justify-content:center;">
+                <img id="voucherOtpQrImg" alt="QR OTP" style="max-width:260px; width:100%; height:auto; border:1px solid #eee; border-radius:10px;">
+            </div>
+            <div class="mt-3 small text-muted">
+                Secret thu cong:
+                <code id="voucherOtpSecret" style="word-break:break-all;"></code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeVoucherOtpModal() {
+            var modal = document.getElementById('voucherOtpModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function openVoucherOtpModal(el) {
+            var voucherId = el.getAttribute('data-voucher-id');
+            var voucherCode = el.getAttribute('data-voucher-code') || '';
+            var modal = document.getElementById('voucherOtpModal');
+            var title = document.getElementById('voucherOtpTitle');
+            var img = document.getElementById('voucherOtpQrImg');
+            var secret = document.getElementById('voucherOtpSecret');
+
+            if (!voucherId || !modal || !title || !img || !secret) return;
+
+            modal.style.display = 'block';
+            title.textContent = 'Dang tao QR cho voucher ' + voucherCode + '...';
+            img.removeAttribute('src');
+            secret.textContent = '';
+
+            fetch('/loyalty/voucher-otp?voucherId=' + encodeURIComponent(voucherId), {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Khong tai duoc QR OTP');
+                    return res.json();
+                })
+                .then(function (data) {
+                    title.textContent = (data.voucherCode || voucherCode) + ' - ' + (data.voucherName || 'Voucher');
+                    img.src = data.qrCodeDataUri || '';
+                    secret.textContent = data.manualSecret || '';
+                })
+                .catch(function (err) {
+                    title.textContent = err && err.message ? err.message : 'Co loi khi tao QR OTP';
+                });
+        }
+
+        document.addEventListener('click', function (evt) {
+            var modal = document.getElementById('voucherOtpModal');
+            if (!modal) return;
+            if (evt.target === modal) {
+                closeVoucherOtpModal();
+            }
+        });
+    </script>
 </section>
 </body>
 </html>

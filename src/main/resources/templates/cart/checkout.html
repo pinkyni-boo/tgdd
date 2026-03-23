@@ -25,18 +25,24 @@
             <div class="middleCart">
 
                 <div class="cart-fragment">
+                    <h5 class="mb-3 fw-bold">Thong tin ca nhan</h5>
                     <div class="info__cart location">
                         <div class="title-content">
+                            <div th:if="${loggedPhone != null}" class="alert alert-info py-2 mb-3">
+                                Ban dang dang nhap. So dien thoai duoc dong bo de dung diem va voucher.
+                            </div>
                             <div class="location-row">
                                 <span class="iconcart-label-location"></span>
                                 <div class="location-input-wrap">
-                                    <input type="text" name="customerName" class="cart-input-field" placeholder="Nhap ho ten" required>
+                                    <input type="text" name="customerName" class="cart-input-field" placeholder="Nhap ho va ten"
+                                           th:value="${loggedUsername}" required>
                                 </div>
                             </div>
                             <div class="location-row">
                                 <span class="iconcart-label-phone"></span>
                                 <div class="location-input-wrap">
-                                    <input type="tel" name="phone" class="cart-input-field" placeholder="Nhap so dien thoai" required>
+                                    <input type="tel" name="phone" class="cart-input-field" placeholder="Nhap so dien thoai"
+                                           th:value="${loggedPhone}" th:readonly="${loggedPhone != null}" required>
                                 </div>
                             </div>
                             <div class="location-row">
@@ -50,6 +56,7 @@
                     </div>
                 </div>
 
+                <h5 class="mb-3 fw-bold">Thong tin don hang</h5>
                 <div class="product-list">
                     <div th:each="item : ${cartItems}" class="product-item">
                         <div class="product-item-info">
@@ -101,7 +108,7 @@
 
                 <div class="total-provisional">
                     <span class="total-product-quantity">
-                        <span class="total-label">Tam tinh </span>(<span id="summaryItemCount" th:text="${cartItems.size()}">1</span> san pham)
+                        <span class="total-label">Tam tinh </span>(<span id="summaryItemCount" th:text="${totalQuantity}">1</span> san pham)
                     </span>
                     <span class="temp-total-money" id="subtotalDisplay"
                           th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</span>
@@ -258,8 +265,14 @@
         var qtyBox = btn.closest('.product-quantity__btn');
         var qtyInput = qtyBox.querySelector('.qty-input');
         var currentQty = parseInt(qtyInput.value, 10);
+        if (isNaN(currentQty) || currentQty < 1) {
+            currentQty = 1;
+        }
         var newQty = currentQty + delta;
-        if (newQty < 1) return;
+        if (newQty <= 0) {
+            ajaxRemove(productId, btn.closest('.product-item'));
+            return;
+        }
 
         fetch('/cart/api/update', {
             method: 'POST',
@@ -285,7 +298,7 @@
         .then(function(data) {
             if (productEl) productEl.remove();
             applySummaryData(data);
-            if (data.itemCount === 0) {
+            if ((data.totalQuantity || 0) === 0) {
                 window.location.href = '/cart';
             }
         });
@@ -296,7 +309,7 @@
         shippingFee = Number(data.shippingFee || 0);
 
         var countEl = document.getElementById('summaryItemCount');
-        if (countEl) countEl.textContent = data.itemCount || 0;
+        if (countEl) countEl.textContent = data.totalQuantity || 0;
 
         var subtotalEl = document.getElementById('subtotalDisplay');
         if (subtotalEl) subtotalEl.textContent = formatMoney(subtotalAmount);
@@ -392,27 +405,33 @@
     var phoneInput = document.querySelector('input[name="phone"]');
     var nameInput = document.querySelector('input[name="customerName"]');
 
+    function loadCustomerLoyaltyByPhone(phone) {
+        if (!phone || phone.length < 9) return;
+        fetch('/api/customer/points?phone=' + encodeURIComponent(phone))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                customerLoyaltyPoints = data.loyaltyPoints || 0;
+                if (data.found && data.customerName && nameInput && !nameInput.value.trim()) {
+                    nameInput.value = data.customerName;
+                }
+                updateLoyaltyDisplay();
+            })
+            .catch(function() {
+                customerLoyaltyPoints = 0;
+                updateLoyaltyDisplay();
+            });
+
+        loadCustomerVoucherByPhone(phone);
+    }
+
     if (phoneInput) {
         phoneInput.addEventListener('blur', function() {
-            var phone = this.value.trim();
-            if (phone.length < 9) return;
-
-            fetch('/api/customer/points?phone=' + encodeURIComponent(phone))
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    customerLoyaltyPoints = data.loyaltyPoints || 0;
-                    if (data.found && data.customerName && nameInput && !nameInput.value.trim()) {
-                        nameInput.value = data.customerName;
-                    }
-                    updateLoyaltyDisplay();
-                })
-                .catch(function() {
-                    customerLoyaltyPoints = 0;
-                    updateLoyaltyDisplay();
-                });
-
-            loadCustomerVoucherByPhone(phone);
+            loadCustomerLoyaltyByPhone(this.value.trim());
         });
+
+        if (phoneInput.value && phoneInput.value.trim().length >= 9) {
+            loadCustomerLoyaltyByPhone(phoneInput.value.trim());
+        }
     }
 
     function updateLoyaltyDisplay() {

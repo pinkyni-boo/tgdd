@@ -23,11 +23,26 @@ public class LoyaltyService {
     private final OrderRepository orderRepository;
     private final VoucherRepository voucherRepository;
     private final CustomerVoucherRepository customerVoucherRepository;
+    private final TotpService totpService;
 
     @Transactional(readOnly = true)
     public Optional<Customer> findCustomerByPhone(String phone) {
         if (phone == null || phone.isBlank()) return Optional.empty();
         return customerRepository.findByPhone(phone.trim());
+    }
+
+    public Customer getOrCreateCustomer(String phone, String customerName) {
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException("Phone is required");
+        }
+        String normalizedPhone = phone.trim();
+        return customerRepository.findByPhone(normalizedPhone).orElseGet(() -> {
+            Customer customer = new Customer();
+            customer.setPhone(normalizedPhone);
+            customer.setCustomerName(customerName);
+            customer.setLoyaltyPoints(0);
+            return customerRepository.save(customer);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -57,8 +72,27 @@ public class LoyaltyService {
         return voucherRepository.findByActiveTrueOrderByPointsRequiredAsc();
     }
 
+    public Voucher getVoucherById(Long voucherId) {
+        return voucherRepository.findById(voucherId)
+                .orElseThrow(() -> new IllegalArgumentException("Voucher not found"));
+    }
+
+    public String ensureVoucherOtpSecret(Long voucherId) {
+        Voucher voucher = getVoucherById(voucherId);
+        if (voucher.getOtpSecret() == null || voucher.getOtpSecret().isBlank()) {
+            voucher.setOtpSecret(totpService.generateSecret());
+            voucherRepository.save(voucher);
+        }
+        return voucher.getOtpSecret();
+    }
+
     public CustomerVoucher redeemVoucher(String phone, Long voucherId) {
-        Customer customer = customerRepository.findByPhone(phone)
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException("Phone is required");
+        }
+
+        String normalizedPhone = phone.trim();
+        Customer customer = customerRepository.findWithLockByPhone(normalizedPhone)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found"));

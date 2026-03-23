@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
@@ -54,7 +55,8 @@
                                 <option th:each="category : ${categories}"
                                         th:value="${category.id}" th:text="${category.name}"></option>
                             </select>
-                            <a th:href="@{/categories/add}" class="btn btn-outline-secondary" title="Thêm danh mục mới">+</a>
+                            <a th:href="@{/categories/add}" class="btn btn-outline-secondary" title="Thêm danh mục mới"
+                               sec:authorize="hasAuthority('ADMIN')">+</a>
                         </div>
                     </div>
                     
